@@ -4,6 +4,7 @@ import { v4 as uuidv4 } from 'uuid'
 import './App.css'
 import { FaStore, FaLock, FaTrash } from 'react-icons/fa'; // Make sure to install react-icons package
 
+import cookie from '/cookie.png';
 import skeleton from '/skeleton.jpg';
 import grandma from '/grandma.jpg';
 import farm from '/farmer.jpg';
@@ -30,6 +31,7 @@ const RARITY_CHANCES: Record<number, Record<Rarity, number>> = {
 };
 
 const GENERATOR_IMAGES: Record<string, string> = {
+  cookie,
   skeleton,
   grandma,
   farm,
@@ -1008,7 +1010,7 @@ function App() {
         <div className="left-panel">
           <div className="cookie-container">
           <img 
-            src="/cookie.png" 
+            src={cookie} 
             alt="Cookie" 
             className="cookie" 
             onClick={handleClick}
