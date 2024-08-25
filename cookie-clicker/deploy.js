@@ -16,8 +16,11 @@ try {
   // Commit changes
   execSync('git commit -m "Deploy to GitHub Pages"');
 
+  // Create a new branch called 'gh-pages' and switch to it
+  execSync('git checkout -b gh-pages');
+
   // Push to the gh-pages branch
-  execSync('git push -f https://github.com/23nicolaso/GachaClicker.git main:gh-pages');
+  execSync('git push -f https://github.com/23nicolaso/GachaClicker.git gh-pages');
 
   console.log('Successfully deployed');
 } catch (error) {
