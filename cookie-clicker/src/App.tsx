@@ -935,7 +935,7 @@ function App() {
         // Transfer enhancements from sacrificed material
         enhancedGenerator.enhancements += enhancerGenerator.enhancements;
         enhancedGenerator.level = Math.max(enhancerGenerator.level, enhancedGenerator.level);
-        enhancedGenerator.currentCps = Math.max(enhancerGenerator.currentCps, enhancedGenerator.currentCps);
+        enhancedGenerator.currentCps = Math.max(enhancerGenerator.currentCps, enhancedGenerator.currentCps)+enhancerGenerator.cps*0.1;
   
         setOwnedGenerators(prev =>
           prev.map(g =>
