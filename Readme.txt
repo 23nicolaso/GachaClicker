@@ -4,7 +4,7 @@ A fun and addictive idle game that combines the classic Cookie Clicker mechanics
 
 ## 🎮 Play the Game
 
-[Play Cookie Clicker Gacha](https://23nicolaso.github.io/cookie-clicker-gacha)
+[Play Cookie Clicker Gacha](https://23nicolaso.github.io/gachaclicker)
 
 ## 🚀 Features
 
