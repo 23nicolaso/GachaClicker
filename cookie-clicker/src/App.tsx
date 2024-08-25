@@ -12,7 +12,7 @@ import factory from '/factory.jpg';
 import bank from '/bank.jpg';
 import temple from '/cathedral.jpg';
 import coinflip from '/coinflip.jpg';
-import cardBooster from '/booster.jpg'; // Make sure to add this image to your project
+import cardBooster from '/booster.jpg';
 import theFaker from '/thefaker.jpg';
 import goldenMine from '/golden_mine.jpg';
 import cookieCastle from '/cookieCastle.jpg';
