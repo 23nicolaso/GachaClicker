@@ -1,15 +1,14 @@
 {
-  "name": "cookie-clicker",
+  "name": "gacha-clicker",
   "private": true,
   "version": "0.0.0",
   "type": "module",
   "homepage": "https://23nicolaso.github.io/GachaClicker/",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build": "tsc && vite build",
     "lint": "eslint .",
-    "preview": "vite preview",
-    "deploy": "vite build && node deploy.js"
+    "preview": "vite preview"
   },
   "dependencies": {
     "react": "^18.3.1",
