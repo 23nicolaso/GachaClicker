@@ -333,12 +333,14 @@ function App() {
     }
   
     const newEnhancements = target.enhancements + enhancer.enhancements + 1;
+    const newCps = Math.max(target.currentCps, enhancer.currentCps)+Math.min(target.currentCps, enhancer.currentCps)*0.1;
+    const newLvl = Math.max(target.level, enhancer.level);
 
     const enhancedGenerator = {
       ...target,
       enhancements: newEnhancements,
-      currentCps: target.currentCps,
-      level: target.level
+      currentCps: newCps,
+      level: newLvl
     };
   
     while (newEnhancements % Math.pow(5, target.level) === 0 || newEnhancements > Math.pow(5, target.level)) {
@@ -935,7 +937,7 @@ function App() {
         // Transfer enhancements from sacrificed material
         enhancedGenerator.enhancements += enhancerGenerator.enhancements;
         enhancedGenerator.level = Math.max(enhancerGenerator.level, enhancedGenerator.level);
-        enhancedGenerator.currentCps = Math.max(enhancerGenerator.currentCps, enhancedGenerator.currentCps)+enhancerGenerator.cps*0.1;
+        enhancedGenerator.currentCps = Math.max(enhancerGenerator.currentCps, enhancedGenerator.currentCps)+Math.min(targetGenerator.currentCps, enhancerGenerator.currentCps)*0.1;
   
         setOwnedGenerators(prev =>
           prev.map(g =>
