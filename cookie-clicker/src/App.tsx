@@ -1252,7 +1252,7 @@ function App() {
             <h3>{selectedGenerator.name}{selectedGenerator.foilType !== 'normal' ? ` (${selectedGenerator.foilType})` : ''}</h3>
             <p>{selectedGenerator.description}</p>
             <p>___________________________________</p>
-            <p>Level: {selectedGenerator.level} | CPS: {formatNumber(selectedGenerator.currentCps * FOIL_BONUSES[selectedGenerator.foilType])} | {selectedGenerator.rarity}</p>
+            <p>Level: {selectedGenerator.level} | CPS: {formatNumber(selectedGenerator.currentCps * FOIL_BONUSES[selectedGenerator.foilType] * Math.pow(1.25, selectedGenerator.boosts))} | {selectedGenerator.rarity}</p>
             <p>Boosts: {selectedGenerator.boosts}/{BOOST_LIMITS[selectedGenerator.rarity]}</p>
             {selectedGenerator.enhancements > 0 && <p>Enhancement Level: {selectedGenerator.enhancements}/{Math.pow(5, selectedGenerator.level)}</p>}
             <div className="generator-actions">
