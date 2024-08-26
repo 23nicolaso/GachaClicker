@@ -4,6 +4,7 @@ import { v4 as uuidv4 } from 'uuid'
 import './App.css'
 import { FaStore, FaLock, FaTrash } from 'react-icons/fa'; // Make sure to install react-icons package
 
+import cookie from '/cookie.png';
 import skeleton from '/skeleton.jpg';
 import grandma from '/grandma.jpg';
 import farm from '/farmer.jpg';
@@ -12,7 +13,7 @@ import factory from '/factory.jpg';
 import bank from '/bank.jpg';
 import temple from '/cathedral.jpg';
 import coinflip from '/coinflip.jpg';
-import cardBooster from '/booster.jpg'; // Make sure to add this image to your project
+import cardBooster from '/booster.jpg';
 import theFaker from '/thefaker.jpg';
 import goldenMine from '/golden_mine.jpg';
 import cookieCastle from '/cookieCastle.jpg';
@@ -30,6 +31,7 @@ const RARITY_CHANCES: Record<number, Record<Rarity, number>> = {
 };
 
 const GENERATOR_IMAGES: Record<string, string> = {
+  cookie,
   skeleton,
   grandma,
   farm,
@@ -331,12 +333,14 @@ function App() {
     }
   
     const newEnhancements = target.enhancements + enhancer.enhancements + 1;
+    const newCps = Math.max(target.currentCps, enhancer.currentCps)+Math.min(target.currentCps, enhancer.currentCps)*0.1;
+    const newLvl = Math.max(target.level, enhancer.level);
 
     const enhancedGenerator = {
       ...target,
       enhancements: newEnhancements,
-      currentCps: target.currentCps,
-      level: target.level
+      currentCps: newCps,
+      level: newLvl
     };
   
     while (newEnhancements % Math.pow(5, target.level) === 0 || newEnhancements > Math.pow(5, target.level)) {
@@ -933,7 +937,7 @@ function App() {
         // Transfer enhancements from sacrificed material
         enhancedGenerator.enhancements += enhancerGenerator.enhancements;
         enhancedGenerator.level = Math.max(enhancerGenerator.level, enhancedGenerator.level);
-        enhancedGenerator.currentCps = Math.max(enhancerGenerator.currentCps, enhancedGenerator.currentCps);
+        enhancedGenerator.currentCps = Math.max(enhancerGenerator.currentCps, enhancedGenerator.currentCps)+Math.min(targetGenerator.currentCps, enhancerGenerator.currentCps)*0.1;
   
         setOwnedGenerators(prev =>
           prev.map(g =>
@@ -1008,7 +1012,7 @@ function App() {
         <div className="left-panel">
           <div className="cookie-container">
           <img 
-            src="/cookie.png" 
+            src={cookie} 
             alt="Cookie" 
             className="cookie" 
             onClick={handleClick}
