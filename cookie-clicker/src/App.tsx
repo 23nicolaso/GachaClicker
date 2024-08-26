@@ -103,10 +103,10 @@ const FOIL_CHANCES: Record<FoilType, number> = {
 };
 
 const FAKER_CHANCES: Record<FoilType, number> = {
-  normal: 0,
-  holo: 0.5,
-  'reverse-holo': 0.299,
-  'full-art': 0.2,
+  normal: 0.5,
+  holo: 0.4,
+  'reverse-holo': 0.094,
+  'full-art': 0.005,
   'phantom': 0.001,
 };
 
