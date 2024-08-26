@@ -1692,4 +1692,10 @@ button:disabled {
   }
 }
 
+.roll-pool-selector {
+  margin-bottom: 20px;
+}
 
+.roll-pool-selector p {
+  margin-bottom: 10px;
+}

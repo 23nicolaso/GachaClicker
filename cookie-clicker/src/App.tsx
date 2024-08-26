@@ -3,6 +3,7 @@ import { useState, useEffect, useMemo, useRef } from 'react'
 import { v4 as uuidv4 } from 'uuid'
 import './App.css'
 import { FaStore, FaLock, FaTrash } from 'react-icons/fa'; // Make sure to install react-icons package
+import Slider from '@mui/material/Slider'
 
 import cookie from '/cookie.png';
 import skeleton from '/skeleton.jpg';
@@ -220,6 +221,7 @@ function App() {
   const [showWagerInput, setShowWagerInput] = useState(false);
   const [wagerAmount, setWagerAmount] = useState('');
   const coinflipRef = useRef<HTMLDivElement>(null);
+  const [rollPool, setRollPool] = useState(1);
 
   const [isRevealing, setIsRevealing] = useState(false);
   const [revealedCards, setRevealedCards] = useState<GeneratorInstance[]>([]);
@@ -250,9 +252,10 @@ function App() {
 
   useEffect(() => {
     const costMultiplier = Math.pow(ROLL_COST_MULTIPLIER, activeSlots - 1);
-    setRollCost(Math.round(BASE_ROLL_COST * costMultiplier));
-    setMultiRollCost(Math.round(BASE_MULTI_ROLL_COST * costMultiplier));
-  }, [activeSlots]);
+    const poolMultiplier = Math.pow(2, rollPool - 1);
+    setRollCost(Math.round(BASE_ROLL_COST * costMultiplier * poolMultiplier));
+    setMultiRollCost(Math.round(BASE_MULTI_ROLL_COST * costMultiplier * poolMultiplier));
+  }, [activeSlots, rollPool]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -302,6 +305,10 @@ function App() {
     if (window.confirm("Are you sure you want to reset the game? All progress will be lost.")) {
       resetGame();
     }
+  };
+
+  const handleRollPoolChange = (event: Event, newValue: number | number[]) => {
+    setRollPool(newValue as number);
   };
 
   const addCookies = (amount: number) => {
@@ -1165,6 +1172,20 @@ function App() {
           <div className="shop-content">
             <h2>Generator Shop</h2>
             <button className="close-shop" onClick={toggleShop}>&times;</button>
+            
+            <div className="roll-pool-selector">
+              <p>Select Roll Pool: {rollPool}</p>
+              <Slider
+                value={rollPool}
+                onChange={handleRollPoolChange}
+                min={1}
+                max={6}
+                step={1}
+                marks
+                valueLabelDisplay="auto"
+              />
+            </div>
+
             <div className="roll-buttons">
               <button 
                 onClick={() => rollGenerator(1)} 
@@ -1178,7 +1199,7 @@ function App() {
               >
                 {isRolling ? 'Rolling...' : `Roll 8 Generators (Cost: ${multiRollCost} cookies)`}
               </button>
-        </div>
+            </div>
             
             {(isSpinning || isRevealing) && (
               <div className="roll-animation" onClick={closeAnimation}>
