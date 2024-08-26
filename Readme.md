@@ -4,15 +4,14 @@ A fun and addictive idle game that combines the classic Cookie Clicker mechanics
 
 ## 🎮 Play the Game
 
-[Play Cookie Clicker Gacha](https://23nicolaso.github.io/gachaclicker)
+[Play Cookie Clicker Gacha](https://23nicolaso.github.io/GachaClicker/)
 
 ## 🚀 Features
 
 - Click to earn cookies
 - Unlock and upgrade various cookie-producing buildings
-- Collect unique characters through a gacha system
-- Characters provide special bonuses and abilities
-- Prestige system for long-term progression
+- Collect unique cards through a gacha system
+- Cards provide special bonuses and abilities
 
 ## 🛠️ Technologies Used
 
