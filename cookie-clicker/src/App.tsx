@@ -30,6 +30,15 @@ const RARITY_CHANCES: Record<number, Record<Rarity, number>> = {
   6: { common: 0.30, uncommon: 0.30, rare: 0.25, epic: 0.10, legendary: 0.04, mythical: 0.01 },
 };
 
+const BOOST_LIMITS: Record<Rarity, number> = {
+  common: 100,
+  uncommon: 50,
+  rare: 10,
+  epic: 5,
+  legendary: 1,
+  mythical: 0
+};
+
 const GENERATOR_IMAGES: Record<string, string> = {
   cookie,
   skeleton,
@@ -71,6 +80,7 @@ interface GeneratorInstance extends Generator {
   isOneTimeUse: boolean;
   foilType: FoilType;
   uses: number;
+  boosts: number;
 }
 
 interface EvolutionPrompt {
@@ -249,7 +259,7 @@ function App() {
       setCookies(prevCookies => {
         const generation = activeDeck.reduce((acc, gen) => {
           if (gen) {
-            return acc + (gen.currentCps * FOIL_BONUSES[gen.foilType]);
+            return acc + (gen.currentCps * FOIL_BONUSES[gen.foilType] * Math.pow(1.25, gen.boosts));
           }
           return acc;
         }, 0);
@@ -342,12 +352,14 @@ function App() {
     const newEnhancements = target.enhancements + enhancer.enhancements + 1;
     const newCps = Math.max(target.currentCps, enhancer.currentCps)+Math.min(target.currentCps, enhancer.currentCps)*0.1;
     const newLvl = Math.max(target.level, enhancer.level);
+    const newBoost = Math.max(target.boosts, enhancer.boosts);
 
     const enhancedGenerator = {
       ...target,
       enhancements: newEnhancements,
       currentCps: newCps,
-      level: newLvl
+      level: newLvl,
+      boosts: newBoost
     };
   
     while (newEnhancements % Math.pow(5, target.level) === 0 || newEnhancements > Math.pow(5, target.level)) {
@@ -430,8 +442,7 @@ function App() {
   
     const rerolledGenerator = {
       ...target,
-      foilType: newFoilType,
-      currentCps: target.cps * FOIL_BONUSES[newFoilType],
+      foilType: newFoilType
     };
   
     setOwnedGenerators(prev => {
@@ -568,9 +579,14 @@ function App() {
 
   // Add this function to handle the card boost
   const handleBoost = (booster: GeneratorInstance, target: GeneratorInstance) => {
+    if (target.boosts >= BOOST_LIMITS[target.rarity]) {
+      alert(`This ${target.rarity} card has reached its maximum boost limit of ${BOOST_LIMITS[target.rarity]}.`);
+      return;
+    }
+    
     const boostedCard = {
       ...target,
-      currentCps: target.currentCps * 1.1 * FOIL_BONUSES[booster.foilType], // Increase CPS by 10% + any foiltype bonuses
+      boosts: target.boosts + 1
     };
   
     setOwnedGenerators(prev => {
@@ -605,7 +621,7 @@ function App() {
     return activeDeck.reduce((acc, gen) => {
       if (gen) {
         const foilBonus = FOIL_BONUSES[gen.foilType];
-        return acc + (gen.currentCps * foilBonus);
+        return acc + (gen.currentCps * foilBonus * Math.pow(1.25, gen.boosts));
       }
       return acc;
     }, 0);
@@ -664,11 +680,12 @@ function App() {
       ...selectedGenerator,
       instanceId: uuidv4(),
       enhancements: 0,
-      currentCps: selectedGenerator.cps * FOIL_BONUSES[foilType],
+      currentCps: selectedGenerator.cps,
       isLocked: false,
       isOneTimeUse: selectedGenerator.isOneTimeUse,
       foilType,
-      uses: 1
+      uses: 1,
+      boosts: 0
     };
   };
 
@@ -948,7 +965,8 @@ function App() {
             ...targetGenerator,
             currentCps: targetGenerator.currentCps * 2, // Double the CPS
             level: targetGenerator.level + 1,
-            enhancements: 0 // Reset enhancements after evolution
+            enhancements: 0, // Reset enhancements after evolution
+            boosts: Math.max(targetGenerator.boosts, enhancerGenerator.boosts)
           };
   
           setOwnedGenerators(prev =>
@@ -987,7 +1005,8 @@ function App() {
         enhancedGenerator.enhancements += enhancerGenerator.enhancements;
         enhancedGenerator.level = Math.max(enhancerGenerator.level, enhancedGenerator.level);
         enhancedGenerator.currentCps = Math.max(enhancerGenerator.currentCps, enhancedGenerator.currentCps)+Math.min(targetGenerator.currentCps, enhancerGenerator.currentCps)*0.1;
-  
+        enhancedGenerator.boosts = Math.max(targetGenerator.boosts, enhancerGenerator.boosts);
+
         setOwnedGenerators(prev =>
           prev.map(g =>
             g.instanceId === targetGenerator.instanceId ? enhancedGenerator : 
@@ -1046,10 +1065,10 @@ function App() {
       <div className="card-info">
         <span>{generator.name}</span>
         {!generator.isOneTimeUse && (
-          <span>{formatNumber(generator.currentCps * FOIL_BONUSES[generator.foilType])} CPS</span>
+          <span>{formatNumber(generator.currentCps * FOIL_BONUSES[generator.foilType] * Math.pow(1.25, generator.boosts))} CPS</span>
         )}
         {generator.level > 1 && <span>LVL {generator.level}</span>}
-        {generator.isOneTimeUse && <span>Uses: {generator.uses}</span>} {/* Add this line */}
+        {generator.isOneTimeUse && <span>Uses: {generator.uses}</span>} 
       </div>
     </div>
   );
@@ -1234,6 +1253,7 @@ function App() {
             <p>{selectedGenerator.description}</p>
             <p>___________________________________</p>
             <p>Level: {selectedGenerator.level} | CPS: {formatNumber(selectedGenerator.currentCps * FOIL_BONUSES[selectedGenerator.foilType])} | {selectedGenerator.rarity}</p>
+            <p>Boosts: {selectedGenerator.boosts}/{BOOST_LIMITS[selectedGenerator.rarity]}</p>
             {selectedGenerator.enhancements > 0 && <p>Enhancement Level: {selectedGenerator.enhancements}/{Math.pow(5, selectedGenerator.level)}</p>}
             <div className="generator-actions">
               <button onClick={toggleLock}>
