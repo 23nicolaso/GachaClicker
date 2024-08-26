@@ -31,9 +31,18 @@ const RARITY_CHANCES: Record<number, Record<Rarity, number>> = {
   6: { common: 0.30, uncommon: 0.30, rare: 0.25, epic: 0.10, legendary: 0.04, mythical: 0.01 },
 };
 
+const TIER_PRICES: Record<number, number> = {
+  1: 20,
+  2: 100,
+  3: 1000,
+  4: 10000,
+  5: 100000,
+  6: 1000000
+};
+
 const BOOST_LIMITS: Record<Rarity, number> = {
-  common: 100,
-  uncommon: 50,
+  common: 30,
+  uncommon: 20,
   rare: 10,
   epic: 5,
   legendary: 1,
@@ -148,7 +157,6 @@ const GENERATOR_POOL: Generator[] = [
   { id: 'coinflip', name: 'Coinflip', rarity: 'uncommon', cps: 0.1, weight: 5, isOneTimeUse: true, level: 1, description: "Flip a coin to double your cookies or lose them all." },
   { id: 'cardBooster', name: 'Card Booster', rarity: 'uncommon', cps: 0.1, weight: 5, isOneTimeUse: true, level: 1, description: "Drag onto another card to increase its CPS drastically." },
   { id: 'theFaker', name: 'The Faker', rarity: 'rare', cps: 0.1, weight: 5, isOneTimeUse: true, level: 1, description: "Drag onto another card to change its foil. Has the potential to give the phantom foil." },
-  
   { id: 'goldenMine', name: 'Golden Mine', rarity: 'rare', cps: 500, weight: 2, isOneTimeUse: false, level: 1, description: "A mine filled with golden cookie ores, producing a large amount of cookies." },
   { id: 'cookieCastle', name: 'Cookie Castle', rarity: 'rare', cps: 1000, weight: 2, isOneTimeUse: false, level: 1, description: "A majestic castle that bakes cookies in large quantities." },
   { id: 'cookieRobot', name: 'Cookie Robot', rarity: 'epic', cps: 5000, weight: 1, isOneTimeUse: false, level: 1, description: "A robot designed to bake cookies at an incredible rate." },
@@ -204,8 +212,9 @@ function App() {
     return savedAutoEvolve ? JSON.parse(savedAutoEvolve) : false;
   });
 
-  const [rollCost, setRollCost] = useState(BASE_ROLL_COST);
-  const [multiRollCost, setMultiRollCost] = useState(BASE_MULTI_ROLL_COST);
+  const [rollPool, setRollPool] = useState<number>(1);
+  const [rollCost, setRollCost] = useState(TIER_PRICES[1]);
+  const [multiRollCost, setMultiRollCost] = useState(TIER_PRICES[1] * MULTI_ROLL_COUNT);
 
   const [draggedBooster, setDraggedBooster] = useState<GeneratorInstance | null>(null);
   const [floatingNumbers, setFloatingNumbers] = useState<{ id: number; value: number; x: number; y: number }[]>([]);
@@ -221,7 +230,6 @@ function App() {
   const [showWagerInput, setShowWagerInput] = useState(false);
   const [wagerAmount, setWagerAmount] = useState('');
   const coinflipRef = useRef<HTMLDivElement>(null);
-  const [rollPool, setRollPool] = useState(1);
 
   const [isRevealing, setIsRevealing] = useState(false);
   const [revealedCards, setRevealedCards] = useState<GeneratorInstance[]>([]);
@@ -251,11 +259,10 @@ function App() {
   }, [cookies, ownedGenerators, activeDeck, activeSlots, autoEnhanceEnabled])
 
   useEffect(() => {
-    const costMultiplier = Math.pow(ROLL_COST_MULTIPLIER, activeSlots - 1);
-    const poolMultiplier = Math.pow(2, rollPool - 1);
-    setRollCost(Math.round(BASE_ROLL_COST * costMultiplier * poolMultiplier));
-    setMultiRollCost(Math.round(BASE_MULTI_ROLL_COST * costMultiplier * poolMultiplier));
-  }, [activeSlots, rollPool]);
+    const newRollCost = TIER_PRICES[rollPool];
+    setRollCost(newRollCost);
+    setMultiRollCost(newRollCost * MULTI_ROLL_COUNT);
+  }, [rollPool]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -655,7 +662,7 @@ function App() {
   };
 
   const getRandomGenerator = (): GeneratorInstance => {
-    const rarityChances = RARITY_CHANCES[activeSlots];
+    const rarityChances = RARITY_CHANCES[rollPool];
     const rarityRoll = Math.random();
     let cumulativeChance = 0;
     let selectedRarity: Rarity = 'common';
@@ -1174,7 +1181,7 @@ function App() {
             <button className="close-shop" onClick={toggleShop}>&times;</button>
             
             <div className="roll-pool-selector">
-              <p>Select Roll Pool: {rollPool}</p>
+              <p>Select Roll Tier: {rollPool}</p>
               <Slider
                 value={rollPool}
                 onChange={handleRollPoolChange}
@@ -1226,7 +1233,7 @@ function App() {
                             key={index}
                               className={`multi-card ${card.rarity} ${card.foilType}`} 
                               style={{
-                                animationDelay: `${index * 0.15}s`
+                                animationDelay: `${index * 0.05}s`
                               }}
                             >
                               <div className="card-inner">
