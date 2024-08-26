@@ -234,7 +234,7 @@ const GENERATOR_POOL: Generator[] = [
   { id: 'excalibur', name: 'Excalibur', rarity: 'legendary', cps: 20000, weight: 1, isOneTimeUse: false, level: 1, description: "A legendary sword that purifies all active undead creatures into random greater beings." },
   
   { id: 'queen', name: 'Queen', rarity: 'mythical', cps: 1000000, weight: 1, isOneTimeUse: false, level: 1, description: "A cookie queen that rules over a cookie kingdom. While active, the queen boosts the cps of all cards in the active deck by 100%." },
-  // { id: 'cookieGoddess', name: 'Cookie Goddess', rarity: 'mythical', cps: 1000000, weight: 1, isOneTimeUse: false, level: 1, description: "A cookie goddess that has full control over the cookie dimension. Once omniscience and omnipotence are used on the card, the goddess removes all restrictions on boosts, and boosts luck by 50%." },
+  { id: 'cookieGoddess', name: 'Cookie Goddess', rarity: 'mythical', cps: 1000000, weight: 1, isOneTimeUse: false, level: 1, description: "A cookie goddess that has full control over the cookie dimension. Once omniscience and omnipotence are used on the card, the goddess removes all restrictions on boosts, and unlocks a hidden 7th active slot." },
   { id: 'demonLord', name: 'Demon Lord', rarity: 'mythical', cps: 100000, weight: 1, isOneTimeUse: false, level: 1, description: "A demon lord who seeks eternal cookie dominion. Every foil card sacrificed to the Demon Lord permanently increases the Demon Lord's CPS by 10%." },
 ]
 
