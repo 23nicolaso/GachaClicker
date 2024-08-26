@@ -65,8 +65,8 @@ const TIER_PRICES: Record<number, number> = {
 };
 
 const BOOST_LIMITS: Record<Rarity, number> = {
-  common: 30,
-  uncommon: 20,
+  common: 100,
+  uncommon: 30,
   rare: 10,
   epic: 5,
   legendary: 1,
