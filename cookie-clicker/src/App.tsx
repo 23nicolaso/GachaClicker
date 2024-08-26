@@ -10,9 +10,9 @@ import skeleton from '/skeleton.jpg';
 import grandma from '/grandma.jpg';
 import farm from '/farmer.jpg';
 import mine from '/mine.jpg';
-import factory from '/factory.jpg';
+import factory from '/cookieFactory.jpg';
 import bank from '/bank.jpg';
-import temple from '/cathedral.jpg';
+import cathedral from '/cathedral.jpg';
 import coinflip from '/coinflip.jpg';
 import cardBooster from '/booster.jpg';
 import theFaker from '/thefaker.jpg';
@@ -20,15 +20,39 @@ import goldenMine from '/golden_mine.jpg';
 import cookieCastle from '/cookieCastle.jpg';
 import cookieRobot from '/cookierobot.jpg';
 import cookiePortal from '/cookieportal.jpg';
-import cookieAngel from '/cookieAngel2.jpg';
+import cookieAngel from '/cookieAngel.jpg';
+import queen from '/queen.jpg';
+import cookieGoddess from '/CookieGoddesss.jpg';
+import demonLord from '/demonlord.jpg';
+import designer from '/designer.jpg';
+import priest from '/priest.jpg';
+import knight from '/Knight.jpg';
+
+import deliveryboy from '/deliveryboy.jpg';
+import wheatFields from '/farmer2.jpg';
+import apostle from '/Apostle.jpg';
+import omniscience from '/Omniscience.jpg';
+import omnipotence from '/Omnipotence.jpg';
+import godsgarden from '/godsgarden.jpg';
+import garden from '/garden.jpg';
+import latetowork from '/latetowork.jpg';
+import excalibur from '/excalibur.jpg';
+import temple from '/Temple.jpg';
+import goldenGarden from '/goldenGarden.jpg';
+import rain from '/rain.jpg';
+import vengeance from '/vengeance.jpg';
+import destruction from '/destruction.jpg';
+import sorrow from '/sorrow.jpg';
+import fallenAngel from '/fallenAngel.jpg';
+import forestGuardian from '/forestGuardian.jpg';
 
 const RARITY_CHANCES: Record<number, Record<Rarity, number>> = {
   1: { common: 0.80, uncommon: 0.20, rare: 0, epic: 0, legendary: 0, mythical: 0 },
-  2: { common: 0.70, uncommon: 0.25, rare: 0.05, epic: 0, legendary: 0, mythical: 0 },
-  3: { common: 0.60, uncommon: 0.30, rare: 0.08, epic: 0.02, legendary: 0, mythical: 0 },
-  4: { common: 0.50, uncommon: 0.30, rare: 0.15, epic: 0.04, legendary: 0.01, mythical: 0 },
-  5: { common: 0.40, uncommon: 0.30, rare: 0.20, epic: 0.08, legendary: 0.02, mythical: 0 },
-  6: { common: 0.30, uncommon: 0.30, rare: 0.25, epic: 0.10, legendary: 0.04, mythical: 0.01 },
+  2: { common: 0.60, uncommon: 0.30, rare: 0.10, epic: 0, legendary: 0, mythical: 0 },
+  3: { common: 0.40, uncommon: 0.40, rare: 0.18, epic: 0.02, legendary: 0, mythical: 0 },
+  4: { common: 0.20, uncommon: 0.40, rare: 0.30, epic: 0.06, legendary: 0.04, mythical: 0 },
+  5: { common: 0.10, uncommon: 0.30, rare: 0.40, epic: 0.15, legendary: 0.05, mythical: 0 },
+  6: { common: 0.05, uncommon: 0.20, rare: 0.30, epic: 0.30, legendary: 0.145, mythical: 0.005 },
 };
 
 const TIER_PRICES: Record<number, number> = {
@@ -57,7 +81,6 @@ const GENERATOR_IMAGES: Record<string, string> = {
   mine,
   factory,
   bank,
-  temple,
   coinflip,
   cardBooster,
   theFaker,
@@ -66,6 +89,30 @@ const GENERATOR_IMAGES: Record<string, string> = {
   cookieRobot,
   cookiePortal,
   cookieAngel,
+  queen,
+  cookieGoddess,
+  demonLord,
+  designer,
+  priest,
+  knight,
+  deliveryboy,
+  wheatFields,
+  cathedral,
+  goldenGarden,
+  rain,
+  vengeance,
+  destruction,
+  sorrow,
+  fallenAngel,
+  forestGuardian,
+  apostle,
+  omniscience,
+  omnipotence,
+  godsgarden,
+  garden,
+  latetowork,
+  excalibur,
+  temple,
 };
 
 type Rarity = 'common' | 'uncommon' | 'rare' | 'epic' | 'legendary' | 'mythical';
@@ -115,9 +162,9 @@ const RARITY_COLORS: Record<Rarity, string> = {
 }
 
 const FOIL_CHANCES: Record<FoilType, number> = {
-  normal: 0.939,
-  holo: 0.05,
-  'reverse-holo': 0.01,
+  normal: 0.984,
+  holo: 0.01,
+  'reverse-holo': 0.005,
   'full-art': 0.001,
   'phantom': 0,
 };
@@ -150,23 +197,47 @@ const GENERATOR_POOL: Generator[] = [
   { id: 'skeleton', name: 'Skeleton Clicker', rarity: 'common', cps: 0.1, weight: 100, isOneTimeUse: false, level: 1, description: "A spooky skeleton that clicks cookies for you." },
   { id: 'grandma', name: 'Grandma', rarity: 'common', cps: 0.5, weight: 80, isOneTimeUse: false, level: 1, description: "A sweet old lady who bakes cookies with love." },
   { id: 'farm', name: 'Farm', rarity: 'common', cps: 1, weight: 40, isOneTimeUse: false, level: 1, description: "A small farm that grows cookies on trees." },
+  { id: 'deliveryboy', name: 'Delivery Boy', rarity: 'common', cps: 0.1, weight: 40, isOneTimeUse: false, level: 1, description: "A delivery boy who delivers cookies to your doorstep." },
+  { id: 'wheatFields', name: 'Fields', rarity: 'common', cps: 0.1, weight: 40, isOneTimeUse: false, level: 1, description: "A field of premium cookie wheat." },
+  
   { id: 'mine', name: 'Mine', rarity: 'uncommon', cps: 2, weight: 30, isOneTimeUse: false, level: 1, description: "A deep mine filled with cookie ores." },
   { id: 'factory', name: 'Factory', rarity: 'uncommon', cps: 10, weight: 15, isOneTimeUse: false, level: 1, description: "An industrial factory that mass-produces cookies." },
   { id: 'bank', name: 'Bank', rarity: 'uncommon', cps: 15, weight: 10, isOneTimeUse: false, level: 1, description: "A financial institution that invests in cookie futures." },
-  { id: 'temple', name: 'Temple', rarity: 'uncommon', cps: 30, weight: 5, isOneTimeUse: false, level: 1, description: "An ancient temple where cookies are worshipped." },
+  { id: 'cathedral', name: 'Cathedral', rarity: 'uncommon', cps: 30, weight: 5, isOneTimeUse: false, level: 1, description: "An ancient temple where cookies are worshipped." },
   { id: 'coinflip', name: 'Coinflip', rarity: 'uncommon', cps: 0.1, weight: 5, isOneTimeUse: true, level: 1, description: "Flip a coin to double your cookies or lose them all." },
   { id: 'cardBooster', name: 'Card Booster', rarity: 'uncommon', cps: 0.1, weight: 5, isOneTimeUse: true, level: 1, description: "Drag onto another card to increase its CPS drastically." },
+  
   { id: 'theFaker', name: 'The Faker', rarity: 'rare', cps: 0.1, weight: 5, isOneTimeUse: true, level: 1, description: "Drag onto another card to change its foil. Has the potential to give the phantom foil." },
   { id: 'goldenMine', name: 'Golden Mine', rarity: 'rare', cps: 500, weight: 2, isOneTimeUse: false, level: 1, description: "A mine filled with golden cookie ores, producing a large amount of cookies." },
   { id: 'cookieCastle', name: 'Cookie Castle', rarity: 'rare', cps: 1000, weight: 2, isOneTimeUse: false, level: 1, description: "A majestic castle that bakes cookies in large quantities." },
+  { id: 'designer', name: 'Designer', rarity: 'rare', cps: 1000, weight: 2, isOneTimeUse: false, level: 1, description: "A designer that can change the appearance of any card." },
+  { id: 'priest', name: 'Priest', rarity: 'rare', cps: 1000, weight: 2, isOneTimeUse: false, level: 1, description: "A priest who believes in the power of cookies." },
+  { id: 'knight', name: 'Knight', rarity: 'rare', cps: 1000, weight: 2, isOneTimeUse: false, level: 1, description: "A knight who serves the cookie nation." },
+  
   { id: 'cookieRobot', name: 'Cookie Robot', rarity: 'epic', cps: 5000, weight: 1, isOneTimeUse: false, level: 1, description: "A robot designed to bake cookies at an incredible rate." },
   { id: 'cookiePortal', name: 'Cookie Portal', rarity: 'epic', cps: 10000, weight: 1, isOneTimeUse: false, level: 1, description: "A portal that connects to a dimension filled with cookies." },
   { id: 'cookieAngel', name: 'Cookie Angel', rarity: 'epic', cps: 20000, weight: 1, isOneTimeUse: false, level: 1, description: "An angel that grants an immense amount of cookies." },
+  { id: 'forestGuardian', name: 'Forest Guardian', rarity: 'epic', cps: 20000, weight: 1, isOneTimeUse: false, level: 1, description: "A guardian of the cookie forest." },
+  { id: 'apostle', name: 'Apostle', rarity: 'epic', cps: 20000, weight: 1, isOneTimeUse: false, level: 1, description: "An apostle that spreads the cookie gospel." },
+  
+  { id: 'rain', name: 'Rain', rarity: 'epic', cps: 20000, weight: 1, isOneTimeUse: false, level: 1, description: "" },
+  { id: 'vengeance', name: 'Vengeance', rarity: 'epic', cps: 20000, weight: 1, isOneTimeUse: false, level: 1, description: "" },
+  { id: 'destruction', name: 'Destruction', rarity: 'epic', cps: 20000, weight: 1, isOneTimeUse: false, level: 1, description: "" },
+  { id: 'sorrow', name: 'Sorrow', rarity: 'epic', cps: 20000, weight: 1, isOneTimeUse: false, level: 1, description: "" },
+  { id: 'latetowork', name: 'Late to Work', rarity: 'epic', cps: 20000, weight: 1, isOneTimeUse: false, level: 1, description: "" },
+  
+  // legendary and mythical effects are not implemented yet
+  { id: 'fallenAngel', name: 'Fallen Angel', rarity: 'legendary', cps: 20000, weight: 1, isOneTimeUse: false, level: 1, description: "An angel that has fallen from grace. Has the unique property that it can be enhanced using any card." },
+  { id: 'omniscience', name: 'Omniscience', rarity: 'legendary', cps: 20000, weight: 1, isOneTimeUse: true, level: 1, description: "Fuse with omnipotence to awaken the cookie goddess." },
+  { id: 'omnipotence', name: 'Omnipotence', rarity: 'legendary', cps: 20000, weight: 1, isOneTimeUse: true, level: 1, description: "Fuse with omniscience to awaken the cookie goddess." },
+  { id: 'godsgarden', name: 'Gods Garden', rarity: 'legendary', cps: 20000, weight: 1, isOneTimeUse: false, level: 1, description: "A garden that grows cookies at an incredible rate. While active, the garden boosts the cps of all cards in the active deck by 10%." },
+  { id: 'excalibur', name: 'Excalibur', rarity: 'legendary', cps: 20000, weight: 1, isOneTimeUse: false, level: 1, description: "A legendary sword that purifies all active undead creatures into random greater beings." },
+  
+  { id: 'queen', name: 'Queen', rarity: 'mythical', cps: 1000000, weight: 1, isOneTimeUse: false, level: 1, description: "A cookie queen that rules over a cookie kingdom. While active, the queen boosts the cps of all cards in the active deck by 100%." },
+  // { id: 'cookieGoddess', name: 'Cookie Goddess', rarity: 'mythical', cps: 1000000, weight: 1, isOneTimeUse: false, level: 1, description: "A cookie goddess that has full control over the cookie dimension. Once omniscience and omnipotence are used on the card, the goddess removes all restrictions on boosts, and boosts luck by 50%." },
+  { id: 'demonLord', name: 'Demon Lord', rarity: 'mythical', cps: 100000, weight: 1, isOneTimeUse: false, level: 1, description: "A demon lord who seeks eternal cookie dominion. Every foil card sacrificed to the Demon Lord permanently increases the Demon Lord's CPS by 10%." },
 ]
 
-const BASE_ROLL_COST = 20;
-const BASE_MULTI_ROLL_COST = 160;
-const ROLL_COST_MULTIPLIER = 8;
 const MULTI_ROLL_COUNT = 8;
 const MAX_INVENTORY_SIZE = 24; // 8x3 grid
 
