@@ -70,6 +70,7 @@ interface GeneratorInstance extends Generator {
   isLocked: boolean;
   isOneTimeUse: boolean;
   foilType: FoilType;
+  uses: number;
 }
 
 interface EvolutionPrompt {
@@ -328,8 +329,14 @@ function App() {
   };
 
   const enhanceGenerator = (target: GeneratorInstance, enhancer: GeneratorInstance): GeneratorInstance => {
-    if (target.id !== enhancer.id || enhancer.isLocked || target.isOneTimeUse) {
+    if (target.id !== enhancer.id || enhancer.isLocked) {
       return target;
+    }
+    if (target.isOneTimeUse) {
+      return {
+        ...target,
+        uses: target.uses + enhancer.uses
+      };
     }
   
     const newEnhancements = target.enhancements + enhancer.enhancements + 1;
@@ -427,13 +434,24 @@ function App() {
       currentCps: target.cps * FOIL_BONUSES[newFoilType],
     };
   
-    setOwnedGenerators(prev => 
-      prev.map(g => g.instanceId === target.instanceId ? rerolledGenerator : g)
-        .filter(g => g.instanceId !== faker.instanceId)
-    );
+    setOwnedGenerators(prev => {
+      return prev.map(g => {
+        if (g.instanceId === target.instanceId) return rerolledGenerator;
+        if (g.instanceId === faker.instanceId) {
+          return { ...g, uses: g.uses - 1 };
+        }
+        return g;
+      }).filter(g => g.uses > 0);
+    });
   
     setActiveDeck(prev => 
-      prev.map(g => g?.instanceId === target.instanceId ? rerolledGenerator : g)
+      prev.map(g => {
+        if (g?.instanceId === target.instanceId) return rerolledGenerator;
+        if (g?.instanceId === faker.instanceId) {
+          return faker.uses > 1 ? { ...faker, uses: faker.uses - 1 } : null;
+        }
+        return g;
+      })
     );
   
     // Add a visual effect to the rerolled card
@@ -485,7 +503,7 @@ function App() {
           // Card dropped into its original position, do nothing
           return;
         }
-        if (targetGenerator && targetGenerator.id === generator.id && !targetGenerator.isOneTimeUse) {
+        if (targetGenerator && targetGenerator.id === generator.id) {
           setOwnedGenerators(prev => {
             const newInventory = [...prev];
             newInventory[index] = enhanceGenerator(targetGenerator, generator);
@@ -555,13 +573,24 @@ function App() {
       currentCps: target.currentCps * 1.1 * FOIL_BONUSES[booster.foilType], // Increase CPS by 10% + any foiltype bonuses
     };
   
-    setOwnedGenerators(prev => 
-      prev.map(g => g.instanceId === boostedCard.instanceId ? boostedCard : g)
-        .filter(g => g.instanceId !== booster.instanceId)
-    );
+    setOwnedGenerators(prev => {
+      return prev.map(g => {
+        if (g.instanceId === target.instanceId) return boostedCard;
+        if (g.instanceId === booster.instanceId) {
+          return { ...g, uses: g.uses - 1 };
+        }
+        return g;
+      }).filter(g => g.uses > 0);
+    });
   
     setActiveDeck(prev => 
-      prev.map(g => g?.instanceId === boostedCard.instanceId ? boostedCard : g)
+      prev.map(g => {
+        if (g?.instanceId === target.instanceId) return boostedCard;
+        if (g?.instanceId === booster.instanceId) {
+          return booster.uses > 1 ? { ...booster, uses: booster.uses - 1 } : null;
+        }
+        return g;
+      })
     );
   
     // Add a visual effect to the boosted card
@@ -638,7 +667,8 @@ function App() {
       currentCps: selectedGenerator.cps * FOIL_BONUSES[foilType],
       isLocked: false,
       isOneTimeUse: selectedGenerator.isOneTimeUse,
-      foilType
+      foilType,
+      uses: 1
     };
   };
 
@@ -754,10 +784,29 @@ function App() {
     ) as T[];
   };
 
+  const updateGeneratorInState = (updatedGenerator: GeneratorInstance) => {
+    setOwnedGenerators(prev => 
+      prev.map(g => g.instanceId === updatedGenerator.instanceId ? updatedGenerator : g)
+    );
+    setActiveDeck(prev => 
+      prev.map(g => g?.instanceId === updatedGenerator.instanceId ? updatedGenerator : g)
+    );
+  
+    // Remove the generator if it has no more uses
+    if (updatedGenerator.uses <= 0) {
+      setOwnedGenerators(prev => prev.filter(g => g.instanceId !== updatedGenerator.instanceId));
+      setActiveDeck(prev => prev.map(g => g?.instanceId === updatedGenerator.instanceId ? null : g));
+    }
+  };
+
   const useOneTimeCard = (generator: GeneratorInstance) => {
     if (generator.id === 'coinflip') {
       setSelectedCoinflipCard(generator);
       setShowWagerInput(true);
+
+      // Decrease the number of uses
+      const updatedGenerator = { ...generator, uses: generator.uses - 1 };
+      updateGeneratorInState(updatedGenerator);
     }
   };
 
@@ -841,7 +890,7 @@ function App() {
     console.log("Auto Enhance triggered");
     
     const allGenerators = [...ownedGenerators, ...activeDeck.filter((g): g is GeneratorInstance => g !== null)];
-    const enhanceableGenerators = allGenerators.filter(g => !g.isOneTimeUse);
+    const enhanceableGenerators = allGenerators;
   
     console.log("Enhanceable generators:", enhanceableGenerators);
   
@@ -991,17 +1040,17 @@ function App() {
       onDragEnd={handleDragEnd}
       onClick={() => handleSlotClick(generator)}
       data-instance-id={generator.instanceId}
+      data-uses={generator.isOneTimeUse ? generator.uses : undefined}
     >
       <img src={GENERATOR_IMAGES[generator.id]} alt={generator.name} />
-      {(
-        <div className="card-info">
-          <span>{generator.name}</span>
-          {!generator.isOneTimeUse && (
-            <span>{formatNumber(generator.currentCps * FOIL_BONUSES[generator.foilType])} CPS</span>
-          )}
-          {generator.level > 1 && <span>LVL {generator.level}</span>}
-        </div>
-      )}
+      <div className="card-info">
+        <span>{generator.name}</span>
+        {!generator.isOneTimeUse && (
+          <span>{formatNumber(generator.currentCps * FOIL_BONUSES[generator.foilType])} CPS</span>
+        )}
+        {generator.level > 1 && <span>LVL {generator.level}</span>}
+        {generator.isOneTimeUse && <span>Uses: {generator.uses}</span>} {/* Add this line */}
+      </div>
     </div>
   );
 

@@ -820,7 +820,7 @@ button:disabled {
 }
 
 .generator-card.one-time-use::before {
-  content: '1x';
+  content: attr(data-uses)'x';
   position: absolute;
   top: 5px;
   right: 5px;
