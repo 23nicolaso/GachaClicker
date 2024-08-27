@@ -763,7 +763,7 @@ function App() {
     }
   };
 
-  const createCookieGoddess = (card1: GeneratorInstance, card2: GeneratorInstance) => {
+  const createCookieGoddess = () => {
     const cookieGoddess = GENERATOR_POOL.find(gen => gen.id === 'cookieGoddess');
     if (!cookieGoddess) {
       console.error('Cookie Goddess not found in GENERATOR_POOL');
@@ -808,7 +808,7 @@ function App() {
   const handleOmniscienceOmnipotence = (source: GeneratorInstance, target: GeneratorInstance) => {
   if ((source.id === 'omniscience' && target.id === 'omnipotence') ||
       (source.id === 'omnipotence' && target.id === 'omniscience')) {
-    createCookieGoddess(source, target);
+    createCookieGoddess();
     return;
   }
 
@@ -1097,31 +1097,31 @@ function App() {
     ) as T[];
   };
 
-  const updateGeneratorInState = (updatedGenerator: GeneratorInstance) => {
-    setOwnedGenerators(prev => 
-      prev.map(g => g.instanceId === updatedGenerator.instanceId ? updatedGenerator : g)
-    );
-    setActiveDeck(prev => 
-      prev.map(g => g?.instanceId === updatedGenerator.instanceId ? updatedGenerator : g)
-    );
+  // const updateGeneratorInState = (updatedGenerator: GeneratorInstance) => {
+  //   setOwnedGenerators(prev => 
+  //     prev.map(g => g.instanceId === updatedGenerator.instanceId ? updatedGenerator : g)
+  //   );
+  //   setActiveDeck(prev => 
+  //     prev.map(g => g?.instanceId === updatedGenerator.instanceId ? updatedGenerator : g)
+  //   );
   
-    // Remove the generator if it has no more uses
-    if (updatedGenerator.uses <= 0) {
-      setOwnedGenerators(prev => prev.filter(g => g.instanceId !== updatedGenerator.instanceId));
-      setActiveDeck(prev => prev.map(g => g?.instanceId === updatedGenerator.instanceId ? null : g));
-    }
-  };
+  //   // Remove the generator if it has no more uses
+  //   if (updatedGenerator.uses <= 0) {
+  //     setOwnedGenerators(prev => prev.filter(g => g.instanceId !== updatedGenerator.instanceId));
+  //     setActiveDeck(prev => prev.map(g => g?.instanceId === updatedGenerator.instanceId ? null : g));
+  //   }
+  // };
 
-  const useOneTimeCard = (generator: GeneratorInstance) => {
-    if (generator.id === 'coinflip') {
-      setSelectedCoinflipCard(generator);
-      setShowWagerInput(true);
+  // const useOneTimeCard = (generator: GeneratorInstance) => {
+  //   if (generator.id === 'coinflip') {
+  //     setSelectedCoinflipCard(generator);
+  //     setShowWagerInput(true);
 
-      // Decrease the number of uses
-      const updatedGenerator = { ...generator, uses: generator.uses - 1 };
-      updateGeneratorInState(updatedGenerator);
-    }
-  };
+  //     // Decrease the number of uses
+  //     const updatedGenerator = { ...generator, uses: generator.uses - 1 };
+  //     updateGeneratorInState(updatedGenerator);
+  //   }
+  // };
 
   const handleWagerSubmit = () => {
     const amount = parseInt(wagerAmount);
