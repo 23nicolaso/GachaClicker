@@ -492,6 +492,22 @@ function App() {
   };
 
   const enhanceGenerator = (target: GeneratorInstance, enhancer: GeneratorInstance): GeneratorInstance => {
+    if (target.id === 'fallenAngel') {
+      // Special case for Fallen Angel: can be enhanced by any card
+      const newEnhancements = target.enhancements + enhancer.enhancements + 1;
+      const newCps = target.currentCps + enhancer.currentCps * 0.1;
+      const newLvl = Math.max(target.level, enhancer.level);
+      const newBoost = Math.max(target.boosts, enhancer.boosts);
+  
+      return {
+        ...target,
+        enhancements: newEnhancements,
+        currentCps: newCps,
+        level: newLvl,
+        boosts: newBoost
+      };
+    } 
+
     if (target.id !== enhancer.id || enhancer.isLocked) {
       return target;
     }
@@ -676,7 +692,7 @@ function App() {
           // Card dropped into its original position, do nothing
           return;
         }
-        if (targetGenerator && targetGenerator.id === generator.id) {
+        if (targetGenerator && (targetGenerator.id === generator.id || targetGenerator.id === 'fallenAngel' )) {
           setOwnedGenerators(prev => {
             const newInventory = [...prev];
             newInventory[index] = enhanceGenerator(targetGenerator, generator);
@@ -701,7 +717,7 @@ function App() {
       }
     } else if (target === 'active') {
       const targetGenerator = activeDeck[index];
-      if (targetGenerator && targetGenerator.id === generator.id && !targetGenerator.isLocked) {
+      if (targetGenerator && (targetGenerator.id === generator.id || targetGenerator.id === 'fallenAngel') && !targetGenerator.isLocked) {
         setActiveDeck(prev => {
           const newDeck = [...prev];
           newDeck[index] = enhanceGenerator(targetGenerator, generator);
@@ -1179,6 +1195,25 @@ function App() {
     setAutoEnhanceEnabled((prev: boolean) => !prev);
   };
 
+  const calculateClickValue = () => {
+    const baseClickValue = 1; // Base value for a click
+    const buffs = calculateBuffs(activeDeck);
+    
+    // Calculate the total onClick value from active generators
+    const totalOnClick = activeDeck.reduce((total, generator) => {
+      if (generator) {
+        const boostMultiplier = Math.pow(1.25, generator.boosts);
+        return total + (generator.onClick * boostMultiplier);
+      }
+      return total;
+    }, baseClickValue);
+
+    // Apply buffs
+    const buffedClickValue = totalOnClick * buffs.onClick;
+
+    return buffedClickValue;
+  };
+
   const autoEnhance = () => {
     console.log("Auto Enhance triggered");
     
@@ -1402,6 +1437,7 @@ function App() {
           <div className="stats">
             <p>Cookies: {formatNumber(cookies)}</p>
             <p>Per second: {formatNumber(totalCPS)}</p>
+            <p>Per click: {formatNumber(calculateClickValue())}</p>
           </div>
           <button className="shop-button" onClick={toggleShop}>
             <FaStore /> Shop
