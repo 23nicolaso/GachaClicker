@@ -55,6 +55,7 @@ const RARITY_CHANCES: Record<number, Record<Rarity, number>> = {
   4: { common: 0.20, uncommon: 0.40, rare: 0.30, epic: 0.06, legendary: 0.04, mythical: 0 },
   5: { common: 0.10, uncommon: 0.30, rare: 0.40, epic: 0.15, legendary: 0.05, mythical: 0 },
   6: { common: 0.05, uncommon: 0.20, rare: 0.30, epic: 0.30, legendary: 0.145, mythical: 0.005 },
+  7: { common: 0, uncommon: 0.15, rare: 0.20, epic: 0.30, legendary: 0.20, mythical: 0.15 },
 };
 
 const TIER_PRICES: Record<number, number> = {
@@ -63,7 +64,8 @@ const TIER_PRICES: Record<number, number> = {
   3: 10000,
   4: 100000,
   5: 500000,
-  6: 1000000
+  6: 1000000,
+  7: 1000000000
 };
 
 const BOOST_LIMITS: Record<Rarity, number> = {
@@ -221,7 +223,7 @@ const FOIL_CHANCE_BUFFS: Record<FoilType, number> = {
 const GENERATOR_POOL: Generator[] = [
   // Sets
   // Prayer Ritual - Greatly boosts crit rate and crit multiplier of active deck
-  { id: 'godsgarden', name: 'Gods Garden', rarity: 'legendary', cps: 50000, weight: 1, isOneTimeUse: false, level: 1, description: "A garden that grows cookies at an incredible rate. While active, the garden boosts the cps of all cards in the active deck by 10%. 3rd card in the set.", onClick: 20000, critRate: GENERIC_CRIT_RATE, critMultiplier: GENERIC_CRIT_MULTIPLIER, set: 'Prayer Ritual', buffs: [{ type: 'cps', value: 0.1 }]},
+  { id: 'godsgarden', name: 'God\'s Garden', rarity: 'legendary', cps: 50000, weight: 1, isOneTimeUse: false, level: 1, description: "A garden that grows cookies at an incredible rate. While active, the garden boosts the cps of all cards in the active deck by 10%. 3rd card in the set.", onClick: 20000, critRate: GENERIC_CRIT_RATE, critMultiplier: GENERIC_CRIT_MULTIPLIER, set: 'Prayer Ritual', buffs: [{ type: 'cps', value: 0.1 }]},
   { id: 'cathedral', name: 'Cathedral', rarity: 'uncommon', cps: 10, weight: 5, isOneTimeUse: false, level: 1, description: "An ancient temple where cookies are worshipped. 2nd card in the Prayer Ritual set.", onClick: 2, critRate: GENERIC_CRIT_RATE, critMultiplier: GENERIC_CRIT_MULTIPLIER, set: 'Prayer Ritual'},
   { id: 'latetowork', name: 'Curious Discovery', rarity: 'rare', cps: 500, weight: 1, isOneTimeUse: false, level: 1, description: "A cookie collector who finds a mysterious cookie field. 1st card in the Prayer Ritual set.", onClick: 250, critRate: GENERIC_CRIT_RATE, critMultiplier: GENERIC_CRIT_MULTIPLIER, set: 'Prayer Ritual'},
 
@@ -254,7 +256,7 @@ const GENERATOR_POOL: Generator[] = [
   { id: 'goldenMine', name: 'Golden Mine', rarity: 'rare', cps: 500, weight: 2, isOneTimeUse: false, level: 1, description: "A mine filled with golden cookie ores, producing a large amount of cookies.", onClick: 150, critRate: GENERIC_CRIT_RATE, critMultiplier: GENERIC_CRIT_MULTIPLIER, set: ''},
   { id: 'knight', name: 'Knight', rarity: 'rare', cps: 1000, weight: 2, isOneTimeUse: false, level: 1, description: "A knight who serves the cookie nation.", onClick: 500, critRate: GENERIC_CRIT_RATE, critMultiplier: GENERIC_CRIT_MULTIPLIER, set: ''},
   { id: 'omnipotence', name: 'Omnipotence', rarity: 'legendary', cps: 0, weight: 1, isOneTimeUse: true, level: 1, description: "Fuse with omniscience to awaken the cookie goddess.", onClick: 0, critRate: GENERIC_CRIT_RATE, critMultiplier: GENERIC_CRIT_MULTIPLIER, set: ''},
-  { id: 'queen', name: 'Queen', rarity: 'mythical', cps: 5000000, weight: 1, isOneTimeUse: false, level: 1, description: "A cookie queen that rules over a cookie kingdom. While active, the queen boosts the CPS of active cards by 100% and on click by 100%.", onClick: 0.5, critRate: GENERIC_CRIT_RATE, critMultiplier: GENERIC_CRIT_MULTIPLIER, set: '', buffs: [{ type: 'cps', value: 1}, { type: 'onClick', value: 1}]},
+  { id: 'queen', name: 'Queen', rarity: 'mythical', cps: 5000000, weight: 1, isOneTimeUse: false, level: 1, description: "A cookie queen that rules over a cookie kingdom. While active, the queen boosts the CPS of active cards by 100% and on click by 100%.", onClick: 1000000, critRate: GENERIC_CRIT_RATE, critMultiplier: GENERIC_CRIT_MULTIPLIER, set: '', buffs: [{ type: 'cps', value: 1}, { type: 'onClick', value: 1}]},
   
   // Traditional CPS
   { id: 'wheatFields', name: 'Fields', rarity: 'common', cps: 5, weight: 40, isOneTimeUse: false, level: 1, description: "A field of premium cookie wheat.", onClick: 0.2, critRate: GENERIC_CRIT_RATE, critMultiplier: GENERIC_CRIT_MULTIPLIER, set: ''},
@@ -271,7 +273,7 @@ const GENERATOR_POOL: Generator[] = [
 
   // Unique Cards
   // { id: 'coinflip', name: 'Coinflip', rarity: 'uncommon', cps: 0.0, weight: 2, isOneTimeUse: true, level: 1, description: "Flip a coin to double your cookies or lose them all.", onClick: 0.5, critRate: 0, critMultiplier: 0, set: ''},
-  { id: 'theFaker', name: 'The Faker', rarity: 'rare', cps: 0.0, weight: 5, isOneTimeUse: true, level: 1, description: "Drag onto another card to change its foil. Has the potential to give the phantom foil.", onClick: 0, critRate: 0, critMultiplier: 0, set: ''},
+  { id: 'theFaker', name: 'The Faker', rarity: 'rare', cps: 0.0, weight: 5, isOneTimeUse: true, level: 1, description: "Drag onto another card for a chance to get a new foil. Has the potential to give an exclusive phantom foil.", onClick: 0, critRate: 0, critMultiplier: 0, set: ''},
 ]
 
 const MULTI_ROLL_COUNT = 8;
@@ -508,7 +510,16 @@ function App() {
       // Special case for Fallen Angel: can be enhanced by any card
       newCps += enhancer.currentCps * 0.1 * buffs.sacrificeMultiplier;
       newOnClick += enhancer.onClick * 0.1 * buffs.sacrificeMultiplier;
-    } else if (target.id !== enhancer.id || enhancer.isLocked) {
+    } else if (target.id === 'demonLord') {
+      if(enhancer.foilType !== 'normal'){
+        target.buffs = target.buffs?.map(buff => ({
+          ...buff,
+          value: buff.value * 1.1
+        })) || []
+      }
+    }
+    
+    else if (target.id !== enhancer.id || enhancer.isLocked) {
       return target;
     } else if (target.isOneTimeUse) {
       return {
@@ -520,7 +531,7 @@ function App() {
       newOnClick = Math.max(target.onClick, enhancer.onClick) + Math.min(target.onClick, enhancer.onClick) * 0.1;
     }
   
-    const newBoost = Math.max(target.boosts, enhancer.boosts);
+    const newBoost = Math.min(Math.max(target.boosts, enhancer.boosts), BOOST_LIMITS[target.rarity]);
   
     // Check for evolution
     if (newEnhancements >= Math.pow(5, target.level)) {
@@ -693,7 +704,7 @@ function App() {
           // Card dropped into its original position, do nothing
           return;
         }
-        if (targetGenerator && (targetGenerator.id === generator.id || targetGenerator.id === 'fallenAngel' )) {
+        if (targetGenerator && (targetGenerator.id === generator.id || targetGenerator.id === 'fallenAngel' || targetGenerator.id === 'demonLord')) {
           setOwnedGenerators(prev => {
             const newInventory = [...prev];
             newInventory[index] = enhanceGenerator(targetGenerator, generator);
@@ -718,7 +729,7 @@ function App() {
       }
     } else if (target === 'active') {
       const targetGenerator = activeDeck[index];
-      if (targetGenerator && (targetGenerator.id === generator.id || targetGenerator.id === 'fallenAngel') && !targetGenerator.isLocked) {
+      if (targetGenerator && (targetGenerator.id === generator.id || targetGenerator.id === 'fallenAngel' || targetGenerator.id === 'demonLord') && !targetGenerator.isLocked) {
         setActiveDeck(prev => {
           const newDeck = [...prev];
           newDeck[index] = enhanceGenerator(targetGenerator, generator);
@@ -1523,7 +1534,7 @@ function App() {
                 value={rollPool}
                 onChange={handleRollPoolChange}
                 min={1}
-                max={6}
+                max={7}
                 step={1}
                 marks
                 valueLabelDisplay="auto"
@@ -1618,9 +1629,9 @@ function App() {
             <p>{selectedGenerator.description}</p>
             <p>___________________________________</p>
             <p>Level: {selectedGenerator.level} | CPS: {formatNumber(selectedGenerator.currentCps * FOIL_BONUSES[selectedGenerator.foilType] * Math.pow(1.25, selectedGenerator.boosts))} | {selectedGenerator.rarity}</p>
-            <p>On Click: {formatNumber(selectedGenerator.onClick)} | Crit %: {(selectedGenerator.critRate * 100).toFixed(2)}% | Crit Multiplier: {selectedGenerator.critMultiplier.toFixed(2)}x</p>
+            <p>On Click: {formatNumber(selectedGenerator.onClick * FOIL_BONUSES[selectedGenerator.foilType] * Math.pow(1.25, selectedGenerator.boosts))} | Crit %: {(selectedGenerator.critRate * 100).toFixed(2)}% | Crit Multiplier: {selectedGenerator.critMultiplier.toFixed(2)}x</p>
             <p>Boosts: {selectedGenerator.boosts}/{BOOST_LIMITS[selectedGenerator.rarity]}</p>
-            {selectedGenerator.enhancements > 0 && <p>Enhancement Level: {selectedGenerator.enhancements}/{Math.pow(5, selectedGenerator.level)}</p>}
+            {selectedGenerator.enhancements > 0 && <p>Enhancement Level: {Math.round(selectedGenerator.enhancements)}/{Math.pow(5, selectedGenerator.level)}</p>}
             <div className="generator-actions">
               <button onClick={toggleLock}>
                 {selectedGenerator.isLocked ? 'Unlock' : 'Lock'}
