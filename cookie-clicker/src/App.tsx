@@ -1334,7 +1334,7 @@ function App() {
 
     return (
       <div className="buff-info">
-        {(buffs.cps !== 1 || buffs.critRate !== 0 || buffs.critMultiplier !== 1) && (
+        {(buffs.cps !== 1 || buffs.critRate !== 0 || buffs.critMultiplier !== 1 || buffs.onClick !== 1) && (
           <h4>Active Buffs:</h4>
         )}
         <p>
