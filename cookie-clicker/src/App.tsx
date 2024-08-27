@@ -45,6 +45,9 @@ import sorrow from '/sorrow.jpg';
 import fallenAngel from '/fallenAngel.jpg';
 import forestGuardian from '/forestGuardian.jpg';
 
+const GENERIC_CRIT_RATE = 0.05;
+const GENERIC_CRIT_MULTIPLIER = 5;
+
 const RARITY_CHANCES: Record<number, Record<Rarity, number>> = {
   1: { common: 0.80, uncommon: 0.20, rare: 0, epic: 0, legendary: 0, mythical: 0 },
   2: { common: 0.60, uncommon: 0.30, rare: 0.10, epic: 0, legendary: 0, mythical: 0 },
@@ -64,7 +67,7 @@ const TIER_PRICES: Record<number, number> = {
 };
 
 const BOOST_LIMITS: Record<Rarity, number> = {
-  common: 100,
+  common: 50,
   uncommon: 30,
   rare: 10,
   epic: 5,
@@ -130,6 +133,7 @@ interface Generator {
   critRate: number;
   critMultiplier: number;
   set: string;
+  buffs?: Buff[];
 }
 
 interface GeneratorInstance extends Generator {
@@ -141,7 +145,6 @@ interface GeneratorInstance extends Generator {
   foilType: FoilType;
   uses: number;
   boosts: number;
-  buff?: Buff;
 }
 
 interface EvolutionPrompt {
@@ -157,7 +160,7 @@ interface CoinflipResult {
 }
 
 interface Buff {
-  type: 'cps' | 'critRate' | 'critMultiplier' | 'onClick';
+  type: 'cps' | 'critRate' | 'critMultiplier' | 'onClick' | 'sacrificeMultiplier';
   value: number;
 }
 
@@ -170,7 +173,7 @@ interface SetBonus {
 const SET_BONUSES: SetBonus[] = [
   { setName: 'Prayer Ritual', requiredCards: 3, buff: { type: 'critRate', value: 0.1 } },
   { setName: 'B&W', requiredCards: 3, buff: { type: 'cps', value: 0.25 } },
-  { setName: 'Death Meadow', requiredCards: 3, buff: { type: 'critMultiplier', value: 2 } },
+  { setName: 'Death Meadow', requiredCards: 3, buff: { type: 'sacrificeMultiplier', value: 2 } },
   { setName: 'Craftmanship', requiredCards: 3, buff: { type: 'onClick', value: 2 } },
 ];
 
@@ -218,58 +221,57 @@ const FOIL_CHANCE_BUFFS: Record<FoilType, number> = {
 const GENERATOR_POOL: Generator[] = [
   // Sets
   // Prayer Ritual - Greatly boosts crit rate and crit multiplier of active deck
-  { id: 'godsgarden', name: 'Gods Garden', rarity: 'legendary', cps: 100000, weight: 1, isOneTimeUse: false, level: 1, description: "A garden that grows cookies at an incredible rate. While active, the garden boosts the cps of all cards in the active deck by 10%.", onClick: 0.5, critRate: 0, critMultiplier: 0, set: 'Prayer Ritual'},
-  { id: 'cathedral', name: 'Cathedral', rarity: 'uncommon', cps: 30, weight: 5, isOneTimeUse: false, level: 1, description: "An ancient temple where cookies are worshipped. Part of the Prayer Ritual Set", onClick: 0.5, critRate: 0, critMultiplier: 0, set: 'Prayer Ritual'},
-  { id: 'latetowork', name: 'Late to Work', rarity: 'rare', cps: 1000, weight: 1, isOneTimeUse: false, level: 1, description: "", onClick: 0.5, critRate: 0, critMultiplier: 0, set: 'Prayer Ritual'},
+  { id: 'godsgarden', name: 'Gods Garden', rarity: 'legendary', cps: 50000, weight: 1, isOneTimeUse: false, level: 1, description: "A garden that grows cookies at an incredible rate. While active, the garden boosts the cps of all cards in the active deck by 10%. 3rd card in the set.", onClick: 20000, critRate: GENERIC_CRIT_RATE, critMultiplier: GENERIC_CRIT_MULTIPLIER, set: 'Prayer Ritual', buffs: [{ type: 'cps', value: 0.1 }]},
+  { id: 'cathedral', name: 'Cathedral', rarity: 'uncommon', cps: 10, weight: 5, isOneTimeUse: false, level: 1, description: "An ancient temple where cookies are worshipped. 2nd card in the Prayer Ritual set.", onClick: 2, critRate: GENERIC_CRIT_RATE, critMultiplier: GENERIC_CRIT_MULTIPLIER, set: 'Prayer Ritual'},
+  { id: 'latetowork', name: 'Curious Discovery', rarity: 'rare', cps: 500, weight: 1, isOneTimeUse: false, level: 1, description: "A cookie collector who finds a mysterious cookie field. 1st card in the Prayer Ritual set.", onClick: 250, critRate: GENERIC_CRIT_RATE, critMultiplier: GENERIC_CRIT_MULTIPLIER, set: 'Prayer Ritual'},
 
   // Craftmanship - greatly increases on click
-  { id: 'cookieRobot', name: 'Cookie Robot', rarity: 'epic', cps: 5000, weight: 1, isOneTimeUse: false, level: 1, description: "A robot designed to bake cookies at an incredible rate.", onClick: 0.5, critRate: 0, critMultiplier: 0, set: 'Craftmanship'},
-  { id: 'designer', name: 'Designer', rarity: 'rare', cps: 1000, weight: 2, isOneTimeUse: false, level: 1, description: "A designer that can change the appearance of any card.", onClick: 0.5, critRate: 0, critMultiplier: 0, set: 'Craftmanship'},
-  { id: 'factory', name: 'Factory', rarity: 'uncommon', cps: 10, weight: 15, isOneTimeUse: false, level: 1, description: "An industrial factory that mass-produces cookies.", onClick: 0.5, critRate: 0, critMultiplier: 0, set: 'Craftmanship'},
+  { id: 'cookieRobot', name: 'Cookie Robot', rarity: 'epic', cps: 5000, weight: 1, isOneTimeUse: false, level: 1, description: "A robot designed to farm cookies at an incredible rate.", onClick: 5000, critRate: GENERIC_CRIT_RATE, critMultiplier: GENERIC_CRIT_MULTIPLIER, set: 'Craftmanship'},
+  { id: 'designer', name: 'Designer', rarity: 'rare', cps: 1000, weight: 2, isOneTimeUse: false, level: 1, description: "A designer that can change the appearance of any card.", onClick: 125, critRate: GENERIC_CRIT_RATE, critMultiplier: GENERIC_CRIT_MULTIPLIER, set: 'Craftmanship'},
+  { id: 'factory', name: 'Factory', rarity: 'uncommon', cps: 10, weight: 15, isOneTimeUse: false, level: 1, description: "An industrial factory that mass-produces cookies.", onClick: 2, critRate: GENERIC_CRIT_RATE, critMultiplier: GENERIC_CRIT_MULTIPLIER, set: 'Craftmanship'},
 
   // Black & White - boosts cps by 25%
-  { id: 'skeleton', name: 'Skeleton Clicker', rarity: 'common', cps: 0.5, weight: 100, isOneTimeUse: false, level: 1, description: "A spooky skeleton that clicks cookies for you.", onClick: 0.5, critRate: 0, critMultiplier: 0, set: 'B&W'},
-  { id: 'grandma', name: 'Grandma', rarity: 'common', cps: 0.5, weight: 80, isOneTimeUse: false, level: 1, description: "A sweet old lady who bakes cookies with love.", onClick: 0.5, critRate: 0, critMultiplier: 0, set: 'B&W'},
-  { id: 'farm', name: 'Farm', rarity: 'common', cps: 0.5, weight: 40, isOneTimeUse: false, level: 1, description: "A small farm that grows cookies on trees.", onClick: 0.5, critRate: 0, critMultiplier: 0, set: 'B&W'},
+  { id: 'skeleton', name: 'Skeleton Clicker', rarity: 'common', cps: 2, weight: 100, isOneTimeUse: false, level: 1, description: "A spooky skeleton that clicks cookies for you.", onClick: 0.1, critRate: GENERIC_CRIT_RATE, critMultiplier: GENERIC_CRIT_MULTIPLIER, set: 'B&W'},
+  { id: 'grandma', name: 'Grandma', rarity: 'common', cps: 2, weight: 80, isOneTimeUse: false, level: 1, description: "A sweet old lady who bakes cookies with love.", onClick: 0.1, critRate: GENERIC_CRIT_RATE, critMultiplier: GENERIC_CRIT_MULTIPLIER, set: 'B&W'},
+  { id: 'farm', name: 'Farm', rarity: 'common', cps: 1, weight: 40, isOneTimeUse: false, level: 1, description: "A small farm that grows cookies on trees.", onClick: 0.5, critRate: GENERIC_CRIT_RATE, critMultiplier: GENERIC_CRIT_MULTIPLIER, set: 'B&W'},
 
-  // Death Meadow - greatly amplifies effects of corruption
-  { id: 'rain', name: 'Rain', rarity: 'rare', cps: 1000, weight: 1, isOneTimeUse: false, level: 1, description: "", onClick: 0.5, critRate: 0, critMultiplier: 0, set: 'Death Meadow'},
-  { id: 'vengeance', name: 'Vengeance', rarity: 'epic', cps: 5000, weight: 1, isOneTimeUse: false, level: 1, description: "", onClick: 0.5, critRate: 0, critMultiplier: 0, set: 'Death Meadow'},
-  { id: 'destruction', name: 'Destruction', rarity: 'epic', cps: 10000, weight: 1, isOneTimeUse: false, level: 1, description: "", onClick: 0.5, critRate: 0, critMultiplier: 0, set: 'Death Meadow'},
+  // Death Meadow - greatly amplifies sacrifice gain
+  { id: 'rain', name: 'Rain', rarity: 'rare', cps: 1000, weight: 1, isOneTimeUse: false, level: 1, description: "", onClick: 120, critRate: GENERIC_CRIT_RATE, critMultiplier: GENERIC_CRIT_MULTIPLIER, set: 'Death Meadow'},
+  { id: 'vengeance', name: 'Vengeance', rarity: 'epic', cps: 5000, weight: 1, isOneTimeUse: false, level: 1, description: "", onClick: 2000, critRate: GENERIC_CRIT_RATE, critMultiplier: GENERIC_CRIT_MULTIPLIER, set: 'Death Meadow'},
+  { id: 'destruction', name: 'Destruction', rarity: 'epic', cps: 10000, weight: 1, isOneTimeUse: false, level: 1, description: "", onClick: 1500, critRate: GENERIC_CRIT_RATE, critMultiplier: GENERIC_CRIT_MULTIPLIER, set: 'Death Meadow'},
 
   // Crit Cards
-  { id: 'priest', name: 'Priest', rarity: 'rare', cps: 1000, weight: 2, isOneTimeUse: false, level: 1, description: "A priest who believes in the power of cookies.", onClick: 0.5, critRate: 1, critMultiplier: 5, set: ''},
-  { id: 'apostle', name: 'Apostle', rarity: 'epic', cps: 20000, weight: 1, isOneTimeUse: false, level: 1, description: "An apostle that spreads the cookie gospel.", onClick: 0.5, critRate: 1, critMultiplier: 5, set: ''},
-  { id: 'cookieAngel', name: 'Cookie Angel', rarity: 'epic', cps: 20000, weight: 1, isOneTimeUse: false, level: 1, description: "An angel that grants an immense amount of cookies.", onClick: 0.5, critRate: 1, critMultiplier: 5, set: ''},
-  { id: 'excalibur', name: 'Excalibur', rarity: 'legendary', cps: 100000, weight: 1, isOneTimeUse: false, level: 1, description: "A legendary sword that purifies all active undead creatures into random greater beings.", onClick: 0.5, critRate: 1, critMultiplier: 5, set: ''},
-  { id: 'omniscience', name: 'Omniscience', rarity: 'legendary', cps: 100000, weight: 1, isOneTimeUse: true, level: 1, description: "Fuse with omnipotence to awaken the cookie goddess.", onClick: 0.5, critRate: 1, critMultiplier: 5, set: ''},
-  { id: 'cookieGoddess', name: 'Cookie Goddess', rarity: 'mythical', cps: 10000000, weight: 1, isOneTimeUse: false, level: 1, description: "A cookie goddess that has full control over the cookie dimension. Once omniscience and omnipotence are used on the card, the goddess removes all restrictions on boosts, and unlocks a hidden 7th active slot.", onClick: 0.5, critRate: 0, critMultiplier: 0, set: ''},
+  { id: 'priest', name: 'Priest', rarity: 'rare', cps: 500, weight: 2, isOneTimeUse: false, level: 1, description: "A priest who believes in the power of cookies.", onClick: 200, critRate: GENERIC_CRIT_RATE*2, critMultiplier: GENERIC_CRIT_MULTIPLIER*2, set: ''},
+  { id: 'apostle', name: 'Apostle', rarity: 'epic', cps: 5000, weight: 1, isOneTimeUse: false, level: 1, description: "An apostle that spreads the cookie gospel.", onClick: 2000, critRate: GENERIC_CRIT_RATE*2, critMultiplier: GENERIC_CRIT_MULTIPLIER*2, set: ''},
+  { id: 'cookieAngel', name: 'Cookie Angel', rarity: 'epic', cps: 20000, weight: 1, isOneTimeUse: false, level: 1, description: "An angel that grants an immense amount of cookies.", onClick: 1000, critRate: GENERIC_CRIT_RATE*5, critMultiplier: GENERIC_CRIT_MULTIPLIER*5, set: ''},
+  { id: 'excalibur', name: 'Excalibur', rarity: 'legendary', cps: 50000, weight: 1, isOneTimeUse: false, level: 1, description: "A legendary sword which creates cookies on each swing.", onClick: 50000, critRate: GENERIC_CRIT_RATE*2, critMultiplier: GENERIC_CRIT_MULTIPLIER*5, set: '', buffs: [{ type: 'critMultiplier', value: 1 }] },
+  { id: 'omniscience', name: 'Omniscience', rarity: 'legendary', cps: 0, weight: 1, isOneTimeUse: true, level: 1, description: "Fuse with omnipotence to awaken the cookie goddess.", onClick: 0, critRate: GENERIC_CRIT_RATE*2, critMultiplier: GENERIC_CRIT_MULTIPLIER*2, set: ''},
+  { id: 'cookieGoddess', name: 'Cookie Goddess', rarity: 'mythical', cps: 1000000, weight: 1, isOneTimeUse: false, level: 1, description: "A cookie goddess that has full control over the cookie dimension, boosting all cards crit rate by 50%, and crit multiplier by 100%.", onClick: 125000, critRate: GENERIC_CRIT_RATE*2, critMultiplier: GENERIC_CRIT_MULTIPLIER*2, set: '', buffs: [{ type: 'critRate', value: 0.5 }, { type: 'critMultiplier', value: 1 }] },
 
   // On Click Cards
-  { id: 'deliveryboy', name: 'Delivery Boy', rarity: 'common', cps: 0.5, weight: 40, isOneTimeUse: false, level: 1, description: "A delivery boy who delivers cookies to your doorstep.", onClick: 0.5, critRate: 0, critMultiplier: 0, set: ''},
-  { id: 'mine', name: 'Mine', rarity: 'uncommon', cps: 2, weight: 30, isOneTimeUse: false, level: 1, description: "A deep mine filled with cookie ores.", onClick: 0.5, critRate: 0, critMultiplier: 0, set: ''},
-  { id: 'goldenMine', name: 'Golden Mine', rarity: 'rare', cps: 500, weight: 2, isOneTimeUse: false, level: 1, description: "A mine filled with golden cookie ores, producing a large amount of cookies.", onClick: 0.5, critRate: 0, critMultiplier: 0, set: ''},
-  { id: 'knight', name: 'Knight', rarity: 'rare', cps: 1000, weight: 2, isOneTimeUse: false, level: 1, description: "A knight who serves the cookie nation.", onClick: 0.5, critRate: 0, critMultiplier: 0, set: ''},
-  { id: 'omnipotence', name: 'Omnipotence', rarity: 'legendary', cps: 100000, weight: 1, isOneTimeUse: true, level: 1, description: "Fuse with omniscience to awaken the cookie goddess.", onClick: 0.5, critRate: 0, critMultiplier: 0, set: ''},
-  { id: 'queen', name: 'Queen', rarity: 'mythical', cps: 10000000, weight: 1, isOneTimeUse: false, level: 1, description: "A cookie queen that rules over a cookie kingdom. While active, the queen boosts the cps of all cards in the active deck by 100%.", onClick: 0.5, critRate: 0, critMultiplier: 0, set: ''},
+  { id: 'deliveryboy', name: 'Delivery Boy', rarity: 'common', cps: 0.5, weight: 40, isOneTimeUse: false, level: 1, description: "A delivery boy who delivers cookies to your doorstep.", onClick: 0.5, critRate: GENERIC_CRIT_RATE, critMultiplier: GENERIC_CRIT_MULTIPLIER, set: ''},
+  { id: 'mine', name: 'Mine', rarity: 'uncommon', cps: 2, weight: 30, isOneTimeUse: false, level: 1, description: "A deep mine filled with cookie ores.", onClick: 0.5, critRate: GENERIC_CRIT_RATE, critMultiplier: GENERIC_CRIT_MULTIPLIER, set: ''},
+  { id: 'goldenMine', name: 'Golden Mine', rarity: 'rare', cps: 500, weight: 2, isOneTimeUse: false, level: 1, description: "A mine filled with golden cookie ores, producing a large amount of cookies.", onClick: 150, critRate: GENERIC_CRIT_RATE, critMultiplier: GENERIC_CRIT_MULTIPLIER, set: ''},
+  { id: 'knight', name: 'Knight', rarity: 'rare', cps: 1000, weight: 2, isOneTimeUse: false, level: 1, description: "A knight who serves the cookie nation.", onClick: 500, critRate: GENERIC_CRIT_RATE, critMultiplier: GENERIC_CRIT_MULTIPLIER, set: ''},
+  { id: 'omnipotence', name: 'Omnipotence', rarity: 'legendary', cps: 0, weight: 1, isOneTimeUse: true, level: 1, description: "Fuse with omniscience to awaken the cookie goddess.", onClick: 0, critRate: GENERIC_CRIT_RATE, critMultiplier: GENERIC_CRIT_MULTIPLIER, set: ''},
+  { id: 'queen', name: 'Queen', rarity: 'mythical', cps: 5000000, weight: 1, isOneTimeUse: false, level: 1, description: "A cookie queen that rules over a cookie kingdom. While active, the queen boosts the CPS of active cards by 100% and on click by 100%.", onClick: 0.5, critRate: GENERIC_CRIT_RATE, critMultiplier: GENERIC_CRIT_MULTIPLIER, set: '', buffs: [{ type: 'cps', value: 1}, { type: 'onClick', value: 1}]},
   
   // Traditional CPS
-  { id: 'wheatFields', name: 'Fields', rarity: 'common', cps: 1, weight: 40, isOneTimeUse: false, level: 1, description: "A field of premium cookie wheat.", onClick: 0.5, critRate: 0, critMultiplier: 0, set: ''},
-  { id: 'bank', name: 'Bank', rarity: 'uncommon', cps: 15, weight: 10, isOneTimeUse: false, level: 1, description: "A financial institution that invests in cookie futures.", onClick: 0.5, critRate: 0, critMultiplier: 0, set: ''},
-  { id: 'cardBooster', name: 'Card Booster', rarity: 'uncommon', cps: 0.0, weight: 3, isOneTimeUse: true, level: 1, description: "Drag onto another card to increase its CPS drastically.", onClick: 0.5, critRate: 0, critMultiplier: 0, set: ''},
-  { id: 'cookieCastle', name: 'Cookie Castle', rarity: 'rare', cps: 1000, weight: 2, isOneTimeUse: false, level: 1, description: "A majestic castle that bakes cookies in large quantities.", onClick: 0.5, critRate: 0, critMultiplier: 0, set: ''},
-  { id: 'cookiePortal', name: 'Cookie Portal', rarity: 'epic', cps: 10000, weight: 1, isOneTimeUse: false, level: 1, description: "A portal that connects to a dimension filled with cookies.", onClick: 0.5, critRate: 0, critMultiplier: 0, set: ''},
+  { id: 'wheatFields', name: 'Fields', rarity: 'common', cps: 5, weight: 40, isOneTimeUse: false, level: 1, description: "A field of premium cookie wheat.", onClick: 0.2, critRate: GENERIC_CRIT_RATE, critMultiplier: GENERIC_CRIT_MULTIPLIER, set: ''},
+  { id: 'bank', name: 'Bank', rarity: 'uncommon', cps: 20, weight: 10, isOneTimeUse: false, level: 1, description: "A financial institution that invests in cookie futures.", onClick: 2, critRate: GENERIC_CRIT_RATE, critMultiplier: GENERIC_CRIT_MULTIPLIER, set: ''},
+  { id: 'cardBooster', name: 'Card Booster', rarity: 'uncommon', cps: 0, weight: 3, isOneTimeUse: true, level: 1, description: "Drag onto another card to increase its CPS drastically.", onClick: 0, critRate: GENERIC_CRIT_RATE, critMultiplier: GENERIC_CRIT_MULTIPLIER, set: ''},
+  { id: 'cookieCastle', name: 'Cookie Castle', rarity: 'rare', cps: 2000, weight: 2, isOneTimeUse: false, level: 1, description: "A majestic castle that bakes cookies in large quantities.", onClick: 100, critRate: GENERIC_CRIT_RATE, critMultiplier: GENERIC_CRIT_MULTIPLIER, set: ''},
+  { id: 'cookiePortal', name: 'Cookie Portal', rarity: 'epic', cps: 20000, weight: 1, isOneTimeUse: false, level: 1, description: "A portal that connects to a dimension filled with cookies.", onClick: 1000, critRate: GENERIC_CRIT_RATE, critMultiplier: GENERIC_CRIT_MULTIPLIER, set: ''},
 
   // Corruptive / Sacrificial Cards
-  { id: 'forestGuardian', name: 'Forest Guardian', rarity: 'epic', cps: 20000, weight: 1, isOneTimeUse: false, level: 1, description: "A guardian of the cookie forest.", onClick: 0.5, critRate: 0, critMultiplier: 0, set: ''},
-  { id: 'sorrow', name: 'Sorrow', rarity: 'epic', cps: 10000, weight: 1, isOneTimeUse: false, level: 1, description: "", onClick: 0.5, critRate: 0, critMultiplier: 0, set: ''},
-  { id: 'fallenAngel', name: 'Fallen Angel', rarity: 'legendary', cps: 100000, weight: 1, isOneTimeUse: false, level: 1, description: "An angel that has fallen from grace. Has the unique property that it can be enhanced using any card.", onClick: 0.5, critRate: 0, critMultiplier: 0, set: ''},
-  { id: 'demonLord', name: 'Demon Lord', rarity: 'mythical', cps: 10000000, weight: 1, isOneTimeUse: false, level: 1, description: "A demon lord who seeks eternal cookie dominion. Every foil card sacrificed to the Demon Lord permanently increases the Demon Lord's CPS by 10%.", onClick: 0.5, critRate: 0, critMultiplier: 0, set: ''},
-
+  { id: 'forestGuardian', name: 'Forest Guardian', rarity: 'epic', cps: 20000, weight: 1, isOneTimeUse: false, level: 1, description: "The sacrifice loving guardian of the cookie forest.", onClick: 5000, critRate: GENERIC_CRIT_RATE, critMultiplier: GENERIC_CRIT_MULTIPLIER, set: '', buffs: [{ type: 'sacrificeMultiplier', value: 1.1 }]},
+  { id: 'sorrow', name: 'Sorrow', rarity: 'epic', cps: 10000, weight: 1, isOneTimeUse: false, level: 1, description: "A sorrowful angel that boosts the sacrifice multiplier of all cards in the active deck by 10%.", onClick: 2000, critRate: GENERIC_CRIT_RATE, critMultiplier: GENERIC_CRIT_MULTIPLIER, set: '', buffs: [{ type: 'sacrificeMultiplier', value: 1.1 }]},
+  { id: 'fallenAngel', name: 'Fallen Angel', rarity: 'legendary', cps: 100000, weight: 1, isOneTimeUse: false, level: 1, description: "An angel that has fallen from grace. Has the unique property that it can be enhanced using any card.", onClick: 20000, critRate: GENERIC_CRIT_RATE, critMultiplier: GENERIC_CRIT_MULTIPLIER, set: '', buffs: [{ type: 'sacrificeMultiplier', value: 1.1 }]},
+  { id: 'demonLord', name: 'Demon Lord', rarity: 'mythical', cps: 1000000, weight: 1, isOneTimeUse: false, level: 1, description: "A demon lord who seeks eternal cookie dominion. Every foil card sacrificed to the Demon Lord permanently increases the Demon Lord's on click buff.", onClick: 200000, critRate: GENERIC_CRIT_RATE, critMultiplier: GENERIC_CRIT_MULTIPLIER, set: '', buffs: [{ type: 'onClick', value: 0.1 }]},
 
   // Unique Cards
   // { id: 'coinflip', name: 'Coinflip', rarity: 'uncommon', cps: 0.0, weight: 2, isOneTimeUse: true, level: 1, description: "Flip a coin to double your cookies or lose them all.", onClick: 0.5, critRate: 0, critMultiplier: 0, set: ''},
-  { id: 'theFaker', name: 'The Faker', rarity: 'rare', cps: 0.0, weight: 5, isOneTimeUse: true, level: 1, description: "Drag onto another card to change its foil. Has the potential to give the phantom foil.", onClick: 0.5, critRate: 0, critMultiplier: 0, set: ''},
+  { id: 'theFaker', name: 'The Faker', rarity: 'rare', cps: 0.0, weight: 5, isOneTimeUse: true, level: 1, description: "Drag onto another card to change its foil. Has the potential to give the phantom foil.", onClick: 0, critRate: 0, critMultiplier: 0, set: ''},
 ]
 
 const MULTI_ROLL_COUNT = 8;
@@ -420,19 +422,22 @@ function App() {
   };
 
   const calculateBuffs = (deck: (GeneratorInstance | null)[]): Record<string, number> => {
-    const buffs: Record<string, number> = { cps: 1, critRate: 0, critMultiplier: 1, onClick: 1 };
+    const buffs: Record<string, number> = { cps: 1, critRate: 0, critMultiplier: 1, onClick: 1, sacrificeMultiplier: 1 };
     const activeSets: Record<string, number> = {};
-
+  
     deck.forEach(card => {
       if (card) {
         // Apply individual card buffs
-        if (card.buff) {
-          if (card.buff.type === 'cps') buffs.cps *= (1 + card.buff.value);
-          else if (card.buff.type === 'critRate') buffs.critRate += card.buff.value;
-          else if (card.buff.type === 'critMultiplier') buffs.critMultiplier *= (1 + card.buff.value);
-          else if (card.buff.type === 'onClick') buffs.onClick += card.buff.value;
+        if (card.buffs) {
+          card.buffs.forEach(buff => {
+            if (buff.type === 'cps') buffs.cps *= (1 + buff.value);
+            else if (buff.type === 'critRate') buffs.critRate += buff.value;
+            else if (buff.type === 'critMultiplier') buffs.critMultiplier *= (1 + buff.value);
+            else if (buff.type === 'onClick') buffs.onClick += buff.value;
+            else if (buff.type === 'sacrificeMultiplier') buffs.sacrificeMultiplier += (buff.value);
+          });
         }
-
+  
         // Count cards for set bonuses
         if (card.set) {
           activeSets[card.set] = (activeSets[card.set] || 0) + 1;
@@ -447,6 +452,7 @@ function App() {
         else if (setBonus.buff.type === 'critRate') buffs.critRate += setBonus.buff.value;
         else if (setBonus.buff.type === 'critMultiplier') buffs.critMultiplier *= (1 + setBonus.buff.value);
         else if (setBonus.buff.type === 'onClick') buffs.onClick += setBonus.buff.value;
+        else if (setBonus.buff.type === 'sacrificeMultiplier') buffs.sacrificeMultiplier *= setBonus.buff.value;
       }
     });
 
@@ -492,52 +498,46 @@ function App() {
   };
 
   const enhanceGenerator = (target: GeneratorInstance, enhancer: GeneratorInstance): GeneratorInstance => {
+    const buffs = calculateBuffs(activeDeck);
+    let newEnhancements = target.enhancements + (enhancer.enhancements + 1) * buffs.sacrificeMultiplier;
+    let newCps = target.currentCps;
+    let newOnClick = target.onClick;
+    let newLevel = target.level;
+  
     if (target.id === 'fallenAngel') {
       // Special case for Fallen Angel: can be enhanced by any card
-      const newEnhancements = target.enhancements + enhancer.enhancements + 1;
-      const newCps = target.currentCps + enhancer.currentCps * 0.1;
-      const newLvl = Math.max(target.level, enhancer.level);
-      const newBoost = Math.max(target.boosts, enhancer.boosts);
-  
-      return {
-        ...target,
-        enhancements: newEnhancements,
-        currentCps: newCps,
-        level: newLvl,
-        boosts: newBoost
-      };
-    } 
-
-    if (target.id !== enhancer.id || enhancer.isLocked) {
+      newCps += enhancer.currentCps * 0.1 * buffs.sacrificeMultiplier;
+      newOnClick += enhancer.onClick * 0.1 * buffs.sacrificeMultiplier;
+    } else if (target.id !== enhancer.id || enhancer.isLocked) {
       return target;
-    }
-    if (target.isOneTimeUse) {
+    } else if (target.isOneTimeUse) {
       return {
         ...target,
         uses: target.uses + enhancer.uses
       };
+    } else {
+      newCps = Math.max(target.currentCps, enhancer.currentCps) + Math.min(target.currentCps, enhancer.currentCps) * 0.1;
+      newOnClick = Math.max(target.onClick, enhancer.onClick) + Math.min(target.onClick, enhancer.onClick) * 0.1;
     }
   
-    const newEnhancements = target.enhancements + enhancer.enhancements + 1;
-    const newCps = Math.max(target.currentCps, enhancer.currentCps)+Math.min(target.currentCps, enhancer.currentCps)*0.1;
-    const newLvl = Math.max(target.level, enhancer.level);
     const newBoost = Math.max(target.boosts, enhancer.boosts);
-
-    const enhancedGenerator = {
+  
+    // Check for evolution
+    if (newEnhancements >= Math.pow(5, target.level)) {
+      newLevel += 1;
+      newCps *= 2; // Double the CPS on evolution
+      newOnClick *= 2; // Double the OnClick on evolution
+      newEnhancements = 0; // Reset enhancements after evolution
+    }
+  
+    return {
       ...target,
       enhancements: newEnhancements,
       currentCps: newCps,
-      level: newLvl,
+      onClick: newOnClick,
+      level: newLevel,
       boosts: newBoost
     };
-  
-    while (newEnhancements % Math.pow(5, target.level) === 0 || newEnhancements > Math.pow(5, target.level)) {
-      const evolutionCost = Math.pow(5,target.level);
-      setEvolutionPrompt({ generator: target, enhancer: enhancer, cost: evolutionCost });
-      return target; // Return the original target if evolution is prompted
-    }
-  
-    return enhancedGenerator;
   };
 
   const handleRollAgain = () => {
@@ -556,6 +556,7 @@ function App() {
       const evolvedGenerator = {
         ...evolutionPrompt.generator,
         currentCps: evolutionPrompt.generator.currentCps * 2, // 100% boost on evolution
+        onClick: evolutionPrompt.generator.onClick * 2, // 100% boost on evolution
         level: evolutionPrompt.generator.level + 1
       };
   
@@ -791,9 +792,6 @@ function App() {
     setTimeout(() => {
       element.remove();
     }, 3000);
-  
-    // Unlock the 7th active slot
-    setActiveSlots(prev => Math.max(prev, 7));
   };
 
   const handleOmniscienceOmnipotence = (source: GeneratorInstance, target: GeneratorInstance) => {
@@ -806,10 +804,10 @@ function App() {
   let updatedTarget = { ...target };
   
   if (source.id === 'omniscience') {
-    updatedTarget.critRate += 0.25; // Increase crit rate by 25%
-    updatedTarget.critMultiplier += 0.25; // Increase crit multiplier by 25%
+    updatedTarget.critRate += 0.05; // Increase crit rate by 5%
+    updatedTarget.critMultiplier += 0.25; // Increase crit multiplier by .25
   } else if (source.id === 'omnipotence') {
-    updatedTarget.onClick *= 2; // Double the onClick value
+    updatedTarget.onClick *= 1.1; // Increase onClick value by 10%
   }
 
   
@@ -907,18 +905,13 @@ function App() {
         const critRoll = Math.random();
         const buffedCritRate = gen.critRate + buffs.critRate;
         if (critRoll < buffedCritRate) {
-          cookiesGained += gen.onClick * buffs.onClick * gen.critMultiplier * buffs.critMultiplier;
+          cookiesGained += gen.onClick * buffs.onClick * gen.critMultiplier * buffs.critMultiplier * Math.pow(1.25, gen.boosts);
           crit = true;
         } else {
-          cookiesGained += gen.onClick * buffs.onClick;
+          cookiesGained += gen.onClick * buffs.onClick * Math.pow(1.25, gen.boosts);
         }
       }
     });
-
-    cookiesGained *= buffs.cps;
-    if (buffs.onClick) {
-      cookiesGained += buffs.onClick;
-    }
 
     cookiesGained = Math.max(1, cookiesGained);
     setCookies(prevCookies => prevCookies + cookiesGained);
@@ -1196,22 +1189,18 @@ function App() {
   };
 
   const calculateClickValue = () => {
-    const baseClickValue = 1; // Base value for a click
+    const baseClickValue = 0; // Base value for a click
     const buffs = calculateBuffs(activeDeck);
     
     // Calculate the total onClick value from active generators
     const totalOnClick = activeDeck.reduce((total, generator) => {
       if (generator) {
-        const boostMultiplier = Math.pow(1.25, generator.boosts);
-        return total + (generator.onClick * boostMultiplier);
+        return total + (generator.onClick * buffs.onClick * Math.pow(1.25, generator.boosts));
       }
       return total;
     }, baseClickValue);
 
-    // Apply buffs
-    const buffedClickValue = totalOnClick * buffs.onClick;
-
-    return buffedClickValue;
+    return totalOnClick;
   };
 
   const autoEnhance = () => {
@@ -1275,6 +1264,7 @@ function App() {
           const evolvedGenerator = {
             ...targetGenerator,
             currentCps: targetGenerator.currentCps * 2, // Double the CPS
+            onClick: targetGenerator.onClick * 2, // Double the OnClick
             level: targetGenerator.level + 1,
             enhancements: 0, // Reset enhancements after evolution
             boosts: Math.max(targetGenerator.boosts, enhancerGenerator.boosts)
@@ -1369,7 +1359,7 @@ function App() {
 
     return (
       <div className="buff-info">
-        {(buffs.cps !== 1 || buffs.critRate !== 0 || buffs.critMultiplier !== 1 || buffs.onClick !== 1) && (
+        {(buffs.cps !== 1 || buffs.critRate !== 0 || buffs.critMultiplier !== 1 || buffs.onClick !== 1 || buffs.sacrificeMultiplier !== 1) && (
           <h4>Active Buffs:</h4>
         )}
         <p>
@@ -1377,6 +1367,7 @@ function App() {
           {buffs.critRate !== 0 && ` Crit Rate: +${(buffs.critRate * 100).toFixed(2)}%`}
           {buffs.critMultiplier !== 1 && ` Crit Multiplier: x${buffs.critMultiplier.toFixed(2)}`}
           {buffs.onClick !== 1 && ` On Click Multiplier: x${buffs.onClick.toFixed(2)}`}
+          {buffs.sacrificeMultiplier !== 1 && ` Sacrifice Multiplier: x${buffs.sacrificeMultiplier.toFixed(2)}`}
         </p>
         {activeSetBonuses.length > 0 && (
           <>
