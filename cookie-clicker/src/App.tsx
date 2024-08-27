@@ -239,7 +239,7 @@ const GENERATOR_POOL: Generator[] = [
 ]
 
 const MULTI_ROLL_COUNT = 8;
-const MAX_INVENTORY_SIZE = 24; // 8x3 grid
+const MAX_INVENTORY_SIZE = 32; // 8x3 grid
 
 function formatNumber(num: number): string {
   const absNum = Math.abs(num);
