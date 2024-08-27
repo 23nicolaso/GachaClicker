@@ -52,7 +52,7 @@ const RARITY_CHANCES: Record<number, Record<Rarity, number>> = {
   1: { common: 0.80, uncommon: 0.20, rare: 0, epic: 0, legendary: 0, mythical: 0 },
   2: { common: 0.60, uncommon: 0.30, rare: 0.10, epic: 0, legendary: 0, mythical: 0 },
   3: { common: 0.40, uncommon: 0.40, rare: 0.18, epic: 0.02, legendary: 0, mythical: 0 },
-  4: { common: 0.20, uncommon: 0.40, rare: 0.30, epic: 0.06, legendary: 0.04, mythical: 0 },
+  4: { common: 0.20, uncommon: 0.40, rare: 0.30, epic: 0.10, legendary: 0, mythical: 0 },
   5: { common: 0.10, uncommon: 0.30, rare: 0.40, epic: 0.15, legendary: 0.05, mythical: 0 },
   6: { common: 0.05, uncommon: 0.20, rare: 0.30, epic: 0.30, legendary: 0.145, mythical: 0.005 },
   7: { common: 0, uncommon: 0.15, rare: 0.20, epic: 0.30, legendary: 0.20, mythical: 0.15 },
@@ -174,7 +174,7 @@ interface SetBonus {
 
 const SET_BONUSES: SetBonus[] = [
   { setName: 'Prayer Ritual', requiredCards: 3, buff: { type: 'critRate', value: 0.1 } },
-  { setName: 'B&W', requiredCards: 3, buff: { type: 'cps', value: 0.25 } },
+  { setName: 'B&W', requiredCards: 3, buff: { type: 'cps', value: 1 } },
   { setName: 'Death Meadow', requiredCards: 3, buff: { type: 'sacrificeMultiplier', value: 2 } },
   { setName: 'Craftmanship', requiredCards: 3, buff: { type: 'onClick', value: 2 } },
 ];
