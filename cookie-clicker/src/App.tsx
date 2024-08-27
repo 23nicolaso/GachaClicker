@@ -142,6 +142,7 @@ interface GeneratorInstance extends Generator {
   foilType: FoilType;
   uses: number;
   boosts: number;
+  buff?: Buff;
 }
 
 interface EvolutionPrompt {
@@ -155,6 +156,23 @@ interface CoinflipResult {
   randomValue: number;
   amount: number;
 }
+
+interface Buff {
+  type: 'cps' | 'critRate' | 'critMultiplier';
+  value: number;
+}
+
+interface SetBonus {
+  setName: string;
+  requiredCards: number;
+  buff: Buff;
+}
+
+const SET_BONUSES: SetBonus[] = [
+  { setName: 'Prayer Ritual', requiredCards: 3, buff: { type: 'critRate', value: 0.1 } },
+  { setName: 'B&W', requiredCards: 3, buff: { type: 'cps', value: 0.25 } },
+  { setName: 'Death Meadow', requiredCards: 3, buff: { type: 'critMultiplier', value: 2 } },
+];
 
 const RARITY_COLORS: Record<Rarity, string> = {
   common: '#ffffff',
@@ -201,7 +219,7 @@ const GENERATOR_POOL: Generator[] = [
   // Sets
   // Prayer Ritual - Greatly boosts crit rate and crit multiplier of active deck
   { id: 'godsgarden', name: 'Gods Garden', rarity: 'legendary', cps: 100000, weight: 1, isOneTimeUse: false, level: 1, description: "A garden that grows cookies at an incredible rate. While active, the garden boosts the cps of all cards in the active deck by 10%.", onClick: 0.5, critRate: 0, critMultiplier: 0, set: 'Prayer Ritual', corruptionLevel: 0 },
-  { id: 'cathedral', name: 'Cathedral', rarity: 'uncommon', cps: 30, weight: 5, isOneTimeUse: false, level: 1, description: "An ancient temple where cookies are worshipped.", onClick: 0.5, critRate: 0, critMultiplier: 0, set: 'Prayer Ritual', corruptionLevel: 0 },
+  { id: 'cathedral', name: 'Cathedral', rarity: 'uncommon', cps: 30, weight: 5, isOneTimeUse: false, level: 1, description: "An ancient temple where cookies are worshipped. Part of the Prayer Ritual Set", onClick: 0.5, critRate: 0, critMultiplier: 0, set: 'Prayer Ritual', corruptionLevel: 0 },
   { id: 'latetowork', name: 'Late to Work', rarity: 'rare', cps: 1000, weight: 1, isOneTimeUse: false, level: 1, description: "", onClick: 0.5, critRate: 0, critMultiplier: 0, set: 'Prayer Ritual', corruptionLevel: 0 },
 
   // Craftmanship - greatly increases on click
@@ -220,11 +238,11 @@ const GENERATOR_POOL: Generator[] = [
   { id: 'destruction', name: 'Destruction', rarity: 'epic', cps: 10000, weight: 1, isOneTimeUse: false, level: 1, description: "", onClick: 0.5, critRate: 0, critMultiplier: 0, set: 'Death Meadow', corruptionLevel: 0 },
 
   // Crit Cards
-  { id: 'priest', name: 'Priest', rarity: 'rare', cps: 1000, weight: 2, isOneTimeUse: false, level: 1, description: "A priest who believes in the power of cookies.", onClick: 0.5, critRate: 0, critMultiplier: 0, set: '', corruptionLevel: 0 },
-  { id: 'apostle', name: 'Apostle', rarity: 'epic', cps: 20000, weight: 1, isOneTimeUse: false, level: 1, description: "An apostle that spreads the cookie gospel.", onClick: 0.5, critRate: 0, critMultiplier: 0, set: '', corruptionLevel: 0 },
-  { id: 'cookieAngel', name: 'Cookie Angel', rarity: 'epic', cps: 20000, weight: 1, isOneTimeUse: false, level: 1, description: "An angel that grants an immense amount of cookies.", onClick: 0.5, critRate: 0, critMultiplier: 0, set: '', corruptionLevel: 0 },
-  { id: 'excalibur', name: 'Excalibur', rarity: 'legendary', cps: 100000, weight: 1, isOneTimeUse: false, level: 1, description: "A legendary sword that purifies all active undead creatures into random greater beings.", onClick: 0.5, critRate: 0, critMultiplier: 0, set: '', corruptionLevel: 0 },
-  { id: 'omniscience', name: 'Omniscience', rarity: 'legendary', cps: 100000, weight: 1, isOneTimeUse: true, level: 1, description: "Fuse with omnipotence to awaken the cookie goddess.", onClick: 0.5, critRate: 0, critMultiplier: 0, set: '', corruptionLevel: 0 },
+  { id: 'priest', name: 'Priest', rarity: 'rare', cps: 1000, weight: 2, isOneTimeUse: false, level: 1, description: "A priest who believes in the power of cookies.", onClick: 0.5, critRate: 1, critMultiplier: 5, set: '', corruptionLevel: 0 },
+  { id: 'apostle', name: 'Apostle', rarity: 'epic', cps: 20000, weight: 1, isOneTimeUse: false, level: 1, description: "An apostle that spreads the cookie gospel.", onClick: 0.5, critRate: 1, critMultiplier: 5, set: '', corruptionLevel: 0 },
+  { id: 'cookieAngel', name: 'Cookie Angel', rarity: 'epic', cps: 20000, weight: 1, isOneTimeUse: false, level: 1, description: "An angel that grants an immense amount of cookies.", onClick: 0.5, critRate: 1, critMultiplier: 5, set: '', corruptionLevel: 0 },
+  { id: 'excalibur', name: 'Excalibur', rarity: 'legendary', cps: 100000, weight: 1, isOneTimeUse: false, level: 1, description: "A legendary sword that purifies all active undead creatures into random greater beings.", onClick: 0.5, critRate: 1, critMultiplier: 5, set: '', corruptionLevel: 0 },
+  { id: 'omniscience', name: 'Omniscience', rarity: 'legendary', cps: 100000, weight: 1, isOneTimeUse: true, level: 1, description: "Fuse with omnipotence to awaken the cookie goddess.", onClick: 0.5, critRate: 1, critMultiplier: 5, set: '', corruptionLevel: 0 },
   { id: 'cookieGoddess', name: 'Cookie Goddess', rarity: 'mythical', cps: 10000000, weight: 1, isOneTimeUse: false, level: 1, description: "A cookie goddess that has full control over the cookie dimension. Once omniscience and omnipotence are used on the card, the goddess removes all restrictions on boosts, and unlocks a hidden 7th active slot.", onClick: 0.5, critRate: 0, critMultiplier: 0, set: '', corruptionLevel: 0 },
 
   // On Click Cards
@@ -304,7 +322,7 @@ function App() {
   const [multiRollCost, setMultiRollCost] = useState(TIER_PRICES[1] * MULTI_ROLL_COUNT);
 
   const [draggedBooster, setDraggedBooster] = useState<GeneratorInstance | null>(null);
-  const [floatingNumbers, setFloatingNumbers] = useState<{ id: number; value: number; x: number; y: number }[]>([]);
+  const [floatingNumbers, setFloatingNumbers] = useState<{ id: number; value: number; x: number; y: number, crit: boolean }[]>([]);
   const [selectedGenerator, setSelectedGenerator] = useState<GeneratorInstance | null>(null);
   const [isRolling, setIsRolling] = useState(false)
   const [lastRolledGenerator, setLastRolledGenerator] = useState<GeneratorInstance | null>(null)
@@ -399,6 +417,38 @@ function App() {
     if (window.confirm("Are you sure you want to reset the game? All progress will be lost.")) {
       resetGame();
     }
+  };
+
+  const calculateBuffs = (deck: (GeneratorInstance | null)[]): Record<string, number> => {
+    const buffs: Record<string, number> = { cps: 1, critRate: 0, critMultiplier: 1 };
+    const activeSets: Record<string, number> = {};
+
+    deck.forEach(card => {
+      if (card) {
+        // Apply individual card buffs
+        if (card.buff) {
+          if (card.buff.type === 'cps') buffs.cps *= (1 + card.buff.value);
+          else if (card.buff.type === 'critRate') buffs.critRate += card.buff.value;
+          else if (card.buff.type === 'critMultiplier') buffs.critMultiplier *= (1 + card.buff.value);
+        }
+
+        // Count cards for set bonuses
+        if (card.set) {
+          activeSets[card.set] = (activeSets[card.set] || 0) + 1;
+        }
+      }
+    });
+
+    // Apply set bonuses
+    SET_BONUSES.forEach(setBonus => {
+      if (activeSets[setBonus.setName] >= setBonus.requiredCards) {
+        if (setBonus.buff.type === 'cps') buffs.cps *= (1 + setBonus.buff.value);
+        else if (setBonus.buff.type === 'critRate') buffs.critRate += setBonus.buff.value;
+        else if (setBonus.buff.type === 'critMultiplier') buffs.critMultiplier *= (1 + setBonus.buff.value);
+      }
+    });
+
+    return buffs;
   };
 
   const handleRollPoolChange = (event: Event, newValue: number | number[]) => {
@@ -719,17 +769,34 @@ function App() {
   };
 
   const totalCPS = useMemo(() => {
+    const buffs = calculateBuffs(activeDeck);
     return activeDeck.reduce((acc, gen) => {
       if (gen) {
         const foilBonus = FOIL_BONUSES[gen.foilType];
-        return acc + (gen.currentCps * foilBonus * Math.pow(1.25, gen.boosts));
+        const baseValue = gen.currentCps * foilBonus * Math.pow(1.25, gen.boosts);
+        return acc + (baseValue * buffs.cps);
       }
       return acc;
     }, 0);
   }, [activeDeck]);
 
   const handleClick = () => {
-    const cookiesGained = Math.max(1, totalCPS);
+    let cookiesGained = 0;
+    let crit = false;
+
+    activeDeck.forEach(gen => {
+      if (gen) {
+        const critRoll = Math.random();
+        if (critRoll < gen.critRate) {
+          cookiesGained += gen.onClick * gen.critMultiplier;
+          crit = true;
+        } else {
+          cookiesGained += gen.onClick;
+        }
+      }
+    });
+
+    cookiesGained = Math.max(1, cookiesGained);
     setCookies(prevCookies => prevCookies + cookiesGained);
     
     // Generate random position within the cookie image
@@ -739,7 +806,7 @@ function App() {
     // Add new floating number
     setFloatingNumbers(prev => [
       ...prev,
-      { id: Date.now(), value: cookiesGained, x, y }
+      { id: Date.now(), value: cookiesGained, x, y, crit }
     ]);
   
     // Remove the floating number after animation
@@ -1156,6 +1223,32 @@ function App() {
     }
   };
 
+  const renderBuffInfo = () => {
+    const buffs = calculateBuffs(activeDeck);
+    const activeSetBonuses = SET_BONUSES.filter(setBonus => 
+      activeDeck.filter(card => card?.set === setBonus.setName).length >= setBonus.requiredCards
+    );
+
+    return (
+      <div className="buff-info">
+        {(buffs.cps !== 1 || buffs.critRate !== 0 || buffs.critMultiplier !== 1) && (
+          <h4>Active Buffs:</h4>
+        )}
+        <p>
+          {buffs.cps !== 1 && `CPS Multiplier: x${buffs.cps.toFixed(2)}`}
+          {buffs.critRate !== 0 && ` Crit Rate: +${(buffs.critRate * 100).toFixed(2)}%`}
+          {buffs.critMultiplier !== 1 && ` Crit Multiplier: x${buffs.critMultiplier.toFixed(2)}`}
+        </p>
+        {activeSetBonuses.length > 0 && (
+          <>
+            <h4>Active Set Bonuses:</h4>
+            <p>{activeSetBonuses.map(setBonus => setBonus.setName).join(', ')}</p>
+          </>
+        )}
+      </div>
+    );
+  };
+
   const renderGeneratorCard = (generator: GeneratorInstance, source: 'active' | 'inventory') => (
     <div
       className={`generator-card ${generator.isOneTimeUse ? 'one-time-use' : ''} ${generator.isLocked ? 'locked' : ''} ${generator.foilType}`}
@@ -1181,7 +1274,6 @@ function App() {
 
   return (
     <div className="App">
-      <h1>Cookie Clicker Gacha</h1>
       <div className="game-container">
         <div className="left-panel">
           <div className="cookie-container">
@@ -1198,6 +1290,7 @@ function App() {
             className="floating-number"
               style={{ '--x': `${num.x}px`, '--y': `${num.y}px` } as React.CSSProperties}
           >
+              {num.crit ? <span className="crit">CRIT!</span> : null}
               +{formatNumber(num.value)}
           </div>
         ))}
@@ -1209,6 +1302,26 @@ function App() {
           <button className="shop-button" onClick={toggleShop}>
             <FaStore /> Shop
           </button>
+          <div className="game-controls">
+        <button 
+          onClick={toggleAutoEnhance} 
+          className={`auto-enhance-button ${autoEnhanceEnabled ? 'active' : ''}`}
+        >
+          Auto Enhance: {autoEnhanceEnabled ? 'ON' : 'OFF'}
+        </button>
+
+        <button 
+          onClick={toggleAutoEvolve} 
+          className={`auto-evolve-button ${autoEvolveEnabled ? 'active' : ''}`}
+        >
+          Auto Evolve: {autoEvolveEnabled ? 'ON' : 'OFF'}
+        </button>
+        
+
+        <button onClick={confirmReset} className="reset-button">
+          Reset Game
+        </button>
+          </div>
 
           <div 
             className="trash-slot"
@@ -1221,6 +1334,7 @@ function App() {
       </div>
   
         <div className="right-panel">
+        {renderBuffInfo()}
           <div className="active-deck">
             {[...Array(6)].map((_, index) => (
               <div
@@ -1444,27 +1558,6 @@ function App() {
         </div>
         </div>
       )}
-
-      <div className="game-controls">
-        <button 
-          onClick={toggleAutoEnhance} 
-          className={`auto-enhance-button ${autoEnhanceEnabled ? 'active' : ''}`}
-        >
-          Auto Enhance: {autoEnhanceEnabled ? 'ON' : 'OFF'}
-        </button>
-
-        <button 
-          onClick={toggleAutoEvolve} 
-          className={`auto-evolve-button ${autoEvolveEnabled ? 'active' : ''}`}
-        >
-          Auto Evolve: {autoEvolveEnabled ? 'ON' : 'OFF'}
-        </button>
-        
-
-        <button onClick={confirmReset} className="reset-button">
-          Reset Game
-        </button>
-          </div>
 
       {isSpinning && (
         <div className="spin-overlay">
