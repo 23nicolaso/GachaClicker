@@ -173,10 +173,10 @@ interface SetBonus {
 }
 
 const SET_BONUSES: SetBonus[] = [
-  { setName: 'Prayer Ritual', requiredCards: 3, buff: { type: 'critRate', value: 0.1 } },
-  { setName: 'B&W', requiredCards: 3, buff: { type: 'cps', value: 1 } },
-  { setName: 'Death Meadow', requiredCards: 3, buff: { type: 'sacrificeMultiplier', value: 2 } },
-  { setName: 'Craftmanship', requiredCards: 3, buff: { type: 'onClick', value: 2 } },
+  { setName: 'Prayer Ritual', requiredCards: 3, buff: { type: 'critRate', value: 0.3 } },
+  { setName: 'B&W', requiredCards: 3, buff: { type: 'cps', value: 4 } },
+  { setName: 'Death Meadow', requiredCards: 3, buff: { type: 'sacrificeMultiplier', value: 6 } },
+  { setName: 'Craftmanship', requiredCards: 3, buff: { type: 'onClick', value: 4 } },
 ];
 
 const RARITY_COLORS: Record<Rarity, string> = {
