@@ -9,8 +9,7 @@ A fun and addictive idle game that combines the classic Cookie Clicker mechanics
 ## 🚀 Features
 
 - Click to earn cookies
-- Unlock and upgrade various cookie-producing buildings
-- Collect unique cards through a gacha system
+- Collect unique cookie-producing cards through a gacha system
 - Cards provide special bonuses and abilities
 
 ## 🛠️ Technologies Used
