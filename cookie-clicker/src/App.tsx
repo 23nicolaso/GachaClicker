@@ -2,8 +2,9 @@ import { useState, useEffect, useMemo, useRef } from 'react'
 
 import { v4 as uuidv4 } from 'uuid'
 import './App.css'
-import { FaStore, FaLock, FaTrash } from 'react-icons/fa'; // Make sure to install react-icons package
+import { FaStore, FaLock, FaTrash, FaTrophy } from 'react-icons/fa'; // Make sure to install react-icons package
 import Slider from '@mui/material/Slider'
+import Achievements, { Achievement } from './Achievements'
 
 import cookie from '/cookie.png';
 import skeleton from '/skeleton.jpg';
@@ -173,10 +174,10 @@ interface SetBonus {
 }
 
 const SET_BONUSES: SetBonus[] = [
-  { setName: 'Prayer Ritual', requiredCards: 3, buff: { type: 'critRate', value: 0.5 } },
-  { setName: 'B&W', requiredCards: 3, buff: { type: 'cps', value: 6 } },
-  { setName: 'Death Meadow', requiredCards: 3, buff: { type: 'sacrificeMultiplier', value: 6 } },
-  { setName: 'Craftmanship', requiredCards: 3, buff: { type: 'onClick', value: 6 } },
+  { setName: 'Prayer Ritual', requiredCards: 3, buff: { type: 'critMultiplier', value: 10 } },
+  { setName: 'B&W', requiredCards: 3, buff: { type: 'cps', value: 10 } },
+  { setName: 'Death Meadow', requiredCards: 3, buff: { type: 'sacrificeMultiplier', value: 10 } },
+  { setName: 'Craftmanship', requiredCards: 3, buff: { type: 'onClick', value: 10 } },
 ];
 
 const RARITY_COLORS: Record<Rarity, string> = {
@@ -301,6 +302,49 @@ function formatNumber(num: number): string {
 }
 
 function App() {
+  // USE STATES
+  const [achievements, setAchievements] = useState<Achievement[]>(() => {
+    const savedAchievements = localStorage.getItem('achievements');
+    return savedAchievements ? JSON.parse(savedAchievements) : [
+      { id: 'cookies_100', name: 'Cookie Novice', description: 'Reach 100 cookies', achieved: false, redeemed: false, reward: 1 },
+      { id: 'cookies_100000', name: 'Cookie Apprentice', description: 'Reach 100,000 cookies', achieved: false, redeemed: false, reward: 5 },
+      { id: 'cookies_1000000', name: 'Cookie Expert', description: 'Reach 1 million cookies', achieved: false, redeemed: false, reward: 10 },
+      { id: 'cookies_1000000000', name: 'Cookie Master', description: 'Reach 1 billion cookies', achieved: false, redeemed: false, reward: 50 },
+      { id: 'cookies_1000000000000', name: 'Cookie Legend', description: 'Reach 1 trillion cookies', achieved: false, redeemed: false, reward: 100 },
+      { id: 'first_roll', name: 'Rookie Roller', description: 'Roll your first generator', achieved: false, redeemed: false, reward: 1 },
+      { id: 'first_uncommon', name: 'Uncommon Find', description: 'Get your first uncommon generator', achieved: false, redeemed: false, reward: 5 },
+      { id: 'first_rare', name: 'Rare Discovery', description: 'Get your first rare generator', achieved: false, redeemed: false, reward: 10 },
+      { id: 'first_epic', name: 'Epic Acquisition', description: 'Get your first epic generator', achieved: false, redeemed: false, reward: 50 },
+      { id: 'first_legendary', name: 'Legendary Feat', description: 'Get your first legendary generator', achieved: false, redeemed: false, reward: 100 },
+      { id: 'first_mythical', name: 'Mythical Marvel', description: 'Get your first mythical generator', achieved: false, redeemed: false, reward: 500 },
+    ];
+  });
+
+  const resetAchievements = () => {
+    const defaultAchievements: Achievement[] = [
+      { id: 'cookies_100', name: 'Cookie Novice', description: 'Reach 100 cookies', achieved: false, redeemed: false, reward: 1 },
+      { id: 'cookies_100000', name: 'Cookie Apprentice', description: 'Reach 100,000 cookies', achieved: false, redeemed: false, reward: 5 },
+      { id: 'cookies_1000000', name: 'Cookie Expert', description: 'Reach 1 million cookies', achieved: false, redeemed: false, reward: 10 },
+      { id: 'cookies_1000000000', name: 'Cookie Master', description: 'Reach 1 billion cookies', achieved: false, redeemed: false, reward: 50 },
+      { id: 'cookies_1000000000000', name: 'Cookie Legend', description: 'Reach 1 trillion cookies', achieved: false, redeemed: false, reward: 100 },
+      { id: 'first_roll', name: 'Rookie Roller', description: 'Roll your first generator', achieved: false, redeemed: false, reward: 1 },
+      { id: 'first_uncommon', name: 'Uncommon Find', description: 'Get your first uncommon generator', achieved: false, redeemed: false, reward: 5 },
+      { id: 'first_rare', name: 'Rare Discovery', description: 'Get your first rare generator', achieved: false, redeemed: false, reward: 10 },
+      { id: 'first_epic', name: 'Epic Acquisition', description: 'Get your first epic generator', achieved: false, redeemed: false, reward: 50 },
+      { id: 'first_legendary', name: 'Legendary Feat', description: 'Get your first legendary generator', achieved: false, redeemed: false, reward: 100 },
+      { id: 'first_mythical', name: 'Mythical Marvel', description: 'Get your first mythical generator', achieved: false, redeemed: false, reward: 500 },
+    ];
+  
+    localStorage.setItem('achievements', JSON.stringify(defaultAchievements));
+    setAchievements(defaultAchievements);
+  };
+
+  const [showAchievements, setShowAchievements] = useState(false);
+  const [mysticalCookies, setMysticalCookies] = useState(() => {
+    const savedMysticalCookies = localStorage.getItem('mysticalCookies');
+    return savedMysticalCookies ? parseInt(savedMysticalCookies) : 0;
+  });
+
   const [cookies, setCookies] = useState(() => {
     const savedCookies = localStorage.getItem('cookies')
     return savedCookies ? parseFloat(savedCookies) : 0
@@ -359,6 +403,7 @@ function App() {
   const [spinTrigger, setSpinTrigger] = useState(0);
   const spinRef = useRef<HTMLDivElement>(null);
 
+  // USE EFFECT HOOKS
   useEffect(() => {
     localStorage.setItem('cookies', cookies.toString())
     localStorage.setItem('generators', JSON.stringify(ownedGenerators))
@@ -404,6 +449,15 @@ function App() {
     }
   }, [ownedGenerators, activeDeck, autoEnhanceEnabled]);
 
+  useEffect(() => {
+    localStorage.setItem('achievements', JSON.stringify(achievements));
+  }, [achievements]);
+
+  useEffect(() => {
+    localStorage.setItem('mysticalCookies', mysticalCookies.toString());
+  }, [mysticalCookies]);
+
+  // FUNCTIONS
   const resetGame = () => {
     setCookies(0);
     setOwnedGenerators([]);
@@ -411,9 +465,12 @@ function App() {
     setLastRolledGenerator(null);
     setSelectedGenerator(null);
     setActiveSlots(1);  // Reset to only 1 active slot
+    resetAchievements();  // Reset achievements to default state
+
     localStorage.removeItem('cookies');
     localStorage.removeItem('generators');
     localStorage.removeItem('activeDeck');
+    localStorage.removeItem('achievements');
     localStorage.removeItem('activeSlots');  // Remove active slots from localStorage
   };
 
@@ -794,15 +851,6 @@ function App() {
         return g;
       })
     );
-  
-    // Visual effect for creating the Cookie Goddess
-    const element = document.createElement('div');
-    element.className = 'cookie-goddess-creation';
-    element.textContent = 'Cookie Goddess Created!';
-    document.body.appendChild(element);
-    setTimeout(() => {
-      element.remove();
-    }, 3000);
   };
 
   const handleOmniscienceOmnipotence = (source: GeneratorInstance, target: GeneratorInstance) => {
@@ -941,6 +989,7 @@ function App() {
     setTimeout(() => {
       setFloatingNumbers(prev => prev.filter(num => num.id !== Date.now()));
     }, 2000); // Match this with the CSS animation duration
+    checkAchievements();
   };
 
   const getRandomGenerator = (): GeneratorInstance => {
@@ -1035,6 +1084,7 @@ function App() {
         setOwnedGenerators(prevGenerators => [...prevGenerators, ...newGenerators]);
       }
     }
+    checkAchievements();
   };
 
   useEffect(() => {
@@ -1162,6 +1212,64 @@ function App() {
     }, 2000); // 2 seconds for the animation
     setSelectedCoinflipCard(null);
   };
+
+  const checkAchievements = () => {
+    setAchievements(prevAchievements => {
+      const newAchievements = [...prevAchievements];
+      let changed = false;
+
+      // Check cookie milestones
+      const cookieMilestones = [100, 100000, 1000000, 1000000000, 1000000000000];
+      cookieMilestones.forEach((milestone) => {
+        const achievement = newAchievements.find((a) => a.id === `cookies_${milestone}`);
+        if (achievement && !achievement.achieved && cookies >= milestone) {
+          achievement.achieved = true;
+          changed = true;
+        }
+      });
+
+      // Check for first roll achievement
+      const firstRollAchievement = newAchievements.find((a) => a.id === 'first_roll');
+      if (firstRollAchievement && !firstRollAchievement.achieved && ownedGenerators.length > 0) {
+        firstRollAchievement.achieved = true;
+        changed = true;
+      }
+
+      // Check for rarity achievements
+      const rarityAchievements = {
+        uncommon: 'first_uncommon',
+        rare: 'first_rare',
+        epic: 'first_epic',
+        legendary: 'first_legendary',
+        mythical: 'first_mythical',
+      };
+
+      Object.entries(rarityAchievements).forEach(([rarity, achievementId]) => {
+        const achievement = newAchievements.find((a) => a.id === achievementId);
+        if (achievement && !achievement.achieved && ownedGenerators.some((g) => g.rarity === rarity)) {
+          achievement.achieved = true;
+          changed = true;
+        }
+      });
+
+      return changed ? newAchievements : prevAchievements;
+    });
+  };
+
+  const claimAchievementReward = (id: string) => {
+    const achievement = achievements.find((a) => a.id === id);
+    if (achievement && achievement.achieved && !achievement.redeemed) {
+      setMysticalCookies((prev) => prev + achievement.reward);
+      setAchievements((prev) =>
+        prev.map((a) => (a.id === id ? { ...a, redeemed: true } : a))
+      );
+    }
+  };
+
+  const toggleAchievements = () => {
+    setShowAchievements(!showAchievements);
+  };
+  // Functions end
 
   // Add this effect to scroll to the coinflip result
   useEffect(() => {
@@ -1390,6 +1498,15 @@ function App() {
     );
   };
 
+  const renderStats = () => (
+    <div className="stats">
+      <p>Cookies: {formatNumber(cookies)}</p>
+      <p>Mystical Cookies: {mysticalCookies}</p>
+      <p>Per second: {formatNumber(totalCPS)}</p>
+      <p>Per click: {formatNumber(calculateClickValue())}</p>
+    </div>
+  );
+
   const renderGeneratorCard = (generator: GeneratorInstance, source: 'active' | 'inventory') => (
     <div
       className={`generator-card ${generator.isOneTimeUse ? 'one-time-use' : ''} ${generator.isLocked ? 'locked' : ''} ${generator.foilType}`}
@@ -1437,14 +1554,15 @@ function App() {
         ))}
       </div>
           <div className="stats">
-            <p>Cookies: {formatNumber(cookies)}</p>
-            <p>Per second: {formatNumber(totalCPS)}</p>
-            <p>Per click: {formatNumber(calculateClickValue())}</p>
+            {renderStats()}
           </div>
-          <button className="shop-button" onClick={toggleShop}>
-            <FaStore /> Shop
-          </button>
           <div className="game-controls">
+          <button className="shop-button" onClick={toggleShop}>
+              <FaStore /> Shop
+            </button>
+            <button className="achievements-button" onClick={toggleAchievements}>
+              <FaTrophy /> Achievements
+            </button>
         <button 
           onClick={toggleAutoEnhance} 
           className={`auto-enhance-button ${autoEnhanceEnabled ? 'active' : ''}`}
@@ -1522,6 +1640,13 @@ function App() {
       </div>
         </div>
 
+      {showAchievements && (
+        <Achievements 
+          achievements={achievements} 
+          onClaimReward={claimAchievementReward} 
+          onClose={toggleAchievements}
+        />
+      )}
       {isShopOpen && (
         <div className="shop-overlay">
           <div className="shop-content">

@@ -549,12 +549,17 @@ button:disabled {
 .auto-enhance-button {
   background-color: #4CAF50;
   border: none;
-  color: #222222;
-  border: none;
-  padding: 0.5rem 1rem;
-  border-radius: 5px;
+  color: white;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  font-size: 16px;
+  margin: 4px 2px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition-duration: 0.4s;
+  border-radius: 5px;
 }
 
 .auto-enhance-button:hover {
@@ -568,12 +573,17 @@ button:disabled {
 .auto-evolve-button {
   background-color: #4CAF50;
   border: none;
-  color: #222222;
-  border: none;
-  padding: 0.5rem 1rem;
-  border-radius: 5px;
+  color: white;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  font-size: 16px;
+  margin: 4px 2px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition-duration: 0.4s;
+  border-radius: 5px;
 }
 
 .auto-evolve-button:hover {
@@ -586,6 +596,22 @@ button:disabled {
 
 /* New styles for the shop overlay */
 .shop-button {
+  background-color: #4CAF50;
+  border: none;
+  color: white;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+  transition-duration: 0.4s;
+  border-radius: 5px;
+}
+
+.achievements-button {
   background-color: #4CAF50;
   border: none;
   color: white;
@@ -1801,18 +1827,109 @@ button:disabled {
 }
 
 /* Add this to your existing CSS */
-.buff-icon {
-  position: absolute;
-  top: 5px;
-  right: 5px;
-  width: 20px;
-  height: 20px;
-  background-color: rgba(255, 0, 0, 0.7);
-  border-radius: 50%;
+
+/* ... existing styles */
+
+.achievements-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.8);
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 0.8em;
-  color: #fff;
-  font-weight: bold;
+  z-index: 1000;
+}
+
+.achievements-content {
+  background-color: #222222;
+  padding: 20px;
+  border-radius: 10px;
+  width: 70%;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+}
+
+.achievements-content h2 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #ffffff;
+}
+
+.achievements-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 20px;
+  padding: 20px;
+}
+
+.achievement {
+  background-color: #333333;
+  border-radius: 8px;
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: all 0.3s ease;
+}
+
+.achievement:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.achievement.achieved {
+  background-color: #1a472a;
+}
+
+.achievement.redeemed {
+  background-color: #2a2a2a;
+}
+
+.achievement h3 {
+  margin: 0 0 10px 0;
+  color: #ffffff;
+  font-size: 1.2em;
+}
+
+.achievement p {
+  margin: 0 0 15px 0;
+  color: #cccccc;
+  flex-grow: 1;
+}
+
+.achievement button {
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  align-self: flex-start;
+}
+
+.achievement button:hover {
+  background-color: #45a049;
+}
+
+.redeemed-text {
+  color: #888888;
+  font-style: italic;
+}
+
+.achievements-content .close-button {
+  position: sticky;
+  top: 10px;
+  right: 10px;
+  font-size: 24px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #ffffff;
+  float: right;
+  z-index: 1;
 }
