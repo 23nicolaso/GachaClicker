@@ -110,11 +110,11 @@ const BASE_LOW_LEVEL_COST = 10;
 
 const BOOST_LIMITS: Record<Rarity, number> = {
   common: 50,
-  uncommon: 30,
-  rare: 10,
-  epic: 5,
-  legendary: 1,
-  mythical: 0
+  uncommon: 50,
+  rare: 50,
+  epic: 50,
+  legendary: 50,
+  mythical: 50
 };
 
 const GENERATOR_IMAGES: Record<string, string> = {
@@ -339,7 +339,6 @@ const GENERATOR_POOL: Generator[] = [
   { id: 'sorrow', name: 'Sorrow', rarity: 'epic', cps: 10000, weight: 1, isOneTimeUse: false, level: 1, description: "A sorrowful angel that boosts the sacrifice multiplier of all cards in the active deck by 10%.", onClick: 2000, critRate: GENERIC_CRIT_RATE, critMultiplier: GENERIC_CRIT_MULTIPLIER, set: '', buffs: [{ type: 'sacrificeMultiplier', value: 1.1 }]},
   { id: 'fallenAngel', name: 'Fallen Angel', rarity: 'legendary', cps: 100000, weight: 1, isOneTimeUse: false, level: 1, description: "An angel that has fallen from grace. Has the unique property that it can be enhanced using any card.", onClick: 20000, critRate: GENERIC_CRIT_RATE, critMultiplier: GENERIC_CRIT_MULTIPLIER, set: '', buffs: [{ type: 'sacrificeMultiplier', value: 1.1 }]},
   { id: 'demonLord', name: 'Demon Lord', rarity: 'mythical', cps: 1000000, weight: 1, isOneTimeUse: false, level: 1, description: "A demon lord who seeks eternal cookie dominion. Every foil card sacrificed to the Demon Lord permanently increases the Demon Lord's on click buff.", onClick: 200000, critRate: GENERIC_CRIT_RATE, critMultiplier: GENERIC_CRIT_MULTIPLIER, set: '', buffs: [{ type: 'onClick', value: 1 }]},
-
   // Unique Cards
   // { id: 'coinflip', name: 'Coinflip', rarity: 'uncommon', cps: 0.0, weight: 2, isOneTimeUse: true, level: 1, description: "Flip a coin to double your cookies or lose them all.", onClick: 0.5, critRate: 0, critMultiplier: 0, set: ''},
   { id: 'theFaker', name: 'The Faker', rarity: 'rare', cps: 0.0, weight: 5, isOneTimeUse: true, level: 1, description: "Drag onto another card for a chance to get a new foil. Has the potential to give an exclusive phantom foil.", onClick: 0, critRate: 0, critMultiplier: 0, set: ''},
@@ -751,7 +750,7 @@ function App() {
     if (generator.isLocked) return;
   
     // Calculate recycle reward
-    const recycleReward = RECYCLE_REWARDS[generator.rarity];
+    const recycleReward = RECYCLE_REWARDS[generator.rarity] * (generator.enhancements);
   
     if (recycleReward > 0) {
       setMysticalCookies(prev => prev + recycleReward);
