@@ -439,7 +439,11 @@ function App() {
   // CONST STATES
   
   const [celestialTimer, setCelestialTimer] = useState<number>(0);
-  const [scholarBreakthrough, setScholarBreakthrough] = useState<number | null>(null);
+  
+  const [scholarBreakthrough, setScholarBreakthrough] = useState<number | null>(() => {
+    const savedBreakthrough = localStorage.getItem('scholarBreakthrough');
+    return savedBreakthrough ? parseInt(savedBreakthrough) : null;
+  });
 
   const [lowLevelRollCost, setLowLevelRollCost] = useState(() => {
     const savedCost = localStorage.getItem('lowLevelRollCost');
@@ -543,6 +547,8 @@ function App() {
     setActiveSlots(1);  // Reset to only 1 active slot
     resetAchievements();  // Reset achievements to default state
     setMysticalCookies(0);
+    setScholarBreakthrough(null);
+    localStorage.removeItem('scholarBreakthrough');
     localStorage.removeItem('cookies');
     localStorage.removeItem('generators');
     localStorage.removeItem('activeDeck');
@@ -1315,14 +1321,18 @@ useEffect(() => {
 
     // Scholar evolution
     const scholarInActiveDeck = activeDeck.some(gen => gen?.id === 'scholar');
-    if (scholarInActiveDeck && scholarBreakthrough !== null) {
-      setScholarBreakthrough(prev => {
-        if (prev === null) return null;
-        if (prev <= 0) {
-          const scholars = activeDeck.filter(gen => gen?.id === 'scholar');
-          scholars.forEach(scholar => {
-            if (scholar) {
-              const mythicalScholar: GeneratorInstance = {
+      if (scholarInActiveDeck) {
+        setScholarBreakthrough(prev => {
+          if (prev === null) {
+            const breakthroughTime = Math.floor(Math.random() * 360) + 180; // Random time between 3-6 minutes
+            localStorage.setItem('scholarBreakthrough', breakthroughTime.toString());
+            return breakthroughTime;
+          }
+          if (prev <= 0) {
+            const scholars = activeDeck.filter(gen => gen?.id === 'scholar');
+            scholars.forEach(scholar => {
+              if (scholar) {
+                const mythicalScholar: GeneratorInstance = {
                 ...scholar,
                 id: 'mythicalScholar',
                 name: 'Mythical Scholar',
@@ -1340,26 +1350,25 @@ useEffect(() => {
                 set: 'Mystic'
               };
               setOwnedGenerators(prev => prev.map(gen => gen.instanceId === scholar.instanceId ? mythicalScholar : gen));
-              setActiveDeck(prev => prev.map(gen => gen?.instanceId === scholar.instanceId ? mythicalScholar : gen));
-            }
-          });
-          return null;
-        }
-        return prev - 1;
-      });
-    } else if (scholarInActiveDeck) {
-      setScholarBreakthrough(prev => {
-        if (prev === null) return null;
-        if (prev <= 0) {
-          return null;
-        }
-        return prev - 1;
-      });
-    }
-  }, 1000);
+                setActiveDeck(prev => prev.map(gen => gen?.instanceId === scholar.instanceId ? mythicalScholar : gen));
+              }
+            });
+            localStorage.removeItem('scholarBreakthrough');
+            return null;
+          }
+          const newValue = prev - 1;
+          localStorage.setItem('scholarBreakthrough', newValue.toString());
+          return newValue;
+        });
+      } else if (!scholarInActiveDeck && scholarBreakthrough !== null) {
+        setScholarBreakthrough(null);
+        localStorage.removeItem('scholarBreakthrough');
+      }
+    }, 1000);
 
-  return () => clearInterval(timer);
-}, [celestialTimer, scholarBreakthrough, activeDeck, handleCelestialBonus]);
+    return () => clearInterval(timer);
+  }, [celestialTimer, scholarBreakthrough, activeDeck, handleCelestialBonus]);
+
 
 
   useEffect(() => {
@@ -1588,6 +1597,10 @@ useEffect(() => {
       setActiveDeck(Array(activeDeck.length).fill(null).map((_, index) => resetActiveDeckGenerators[index] || null));
 
       // Reset other game states
+
+      setScholarBreakthrough(null);
+      localStorage.removeItem('scholarBreakthrough');
+
       setLastRolledGenerator(null);
       setSelectedGenerator(null);
       setActiveSlots(1);
