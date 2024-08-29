@@ -286,7 +286,7 @@ const GENERATOR_POOL: Generator[] = [
   { id: 'priest', name: 'Priest', rarity: 'rare', cps: 500, weight: 2, isOneTimeUse: false, level: 1, description: "A priest who believes in the power of cookies.", onClick: 200, critRate: GENERIC_CRIT_RATE*2, critMultiplier: GENERIC_CRIT_MULTIPLIER*2, set: 'Holy', buffs: [{ type: 'critMultiplier', value: 0.1 }] },
   { id: 'apostle', name: 'Apostle', rarity: 'epic', cps: 5000, weight: 1, isOneTimeUse: false, level: 1, description: "An apostle that spreads the cookie gospel.", onClick: 2000, critRate: GENERIC_CRIT_RATE*2, critMultiplier: GENERIC_CRIT_MULTIPLIER*2, set: 'Holy', buffs: [{ type: 'critMultiplier', value: 0.1 }] },
   { id: 'cookieAngel', name: 'Cookie Angel', rarity: 'epic', cps: 20000, weight: 1, isOneTimeUse: false, level: 1, description: "An angel that grants an immense amount of cookies.", onClick: 5000, critRate: GENERIC_CRIT_RATE*5, critMultiplier: GENERIC_CRIT_MULTIPLIER*5, set: 'Holy', buffs: [{ type: 'critMultiplier', value: 0.5 }] },
-  { id: 'cookieGoddess', name: 'Cookie Goddess', rarity: 'mythical', cps: 1000000, weight: 1, isOneTimeUse: false, level: 1, description: "A cookie goddess that has full control over the cookie dimension, boosting all cards crit rate by 50%, and crit multiplier by 100%.", onClick: 125000, critRate: GENERIC_CRIT_RATE*2, critMultiplier: GENERIC_CRIT_MULTIPLIER*2, set: 'Holy', buffs: [{ type: 'critRate', value: 0.5 }, { type: 'critMultiplier', value: 1 }] },
+  { id: 'cookieGoddess', name: 'Cookie Goddess', rarity: 'mythical', cps: 1000000, weight: 1, isOneTimeUse: false, level: 1, description: "A cookie goddess that has full control over the cookie dimension.", onClick: 125000, critRate: GENERIC_CRIT_RATE*2, critMultiplier: GENERIC_CRIT_MULTIPLIER*2, set: 'Holy', buffs: [{ type: 'critRate', value: 0.5 }, { type: 'critMultiplier', value: 1 }] },
 
   // Celestial Set - Creates Mythical Cookies
   { id: 'astrologist', name: 'Astrologist', rarity: 'epic', cps: 10000, weight: 1, isOneTimeUse: false, level: 1, description: "An astrologist who can read the cookie stars.", onClick: 2000, critRate: GENERIC_CRIT_RATE, critMultiplier: GENERIC_CRIT_MULTIPLIER, set: 'Celestial', buffs: [{ type: 'cps', value: 0.1 }] },
@@ -294,13 +294,13 @@ const GENERATOR_POOL: Generator[] = [
   { id: 'constellation', name: 'Constellation', rarity: 'epic', cps: 15000, weight: 1, isOneTimeUse: false, level: 1, description: "A constellation of cookie stars.", onClick: 3000, critRate: GENERIC_CRIT_RATE, critMultiplier: GENERIC_CRIT_MULTIPLIER, set: 'Celestial', buffs: [{ type: 'cps', value: 0.15 }] },
 
   // Yin and Yang
-  { id: 'yin', name: 'Yin', rarity: 'legendary', cps: 50000, weight: 1, isOneTimeUse: false, level: 1, description: "One of the two primordial forces. When paired with Yang, CPS is greatly boosted.", onClick: 5000, critRate: GENERIC_CRIT_RATE, critMultiplier: 10, set: 'Yin and Yang'},
-  { id: 'yang', name: 'Yang', rarity: 'legendary', cps: 50000, weight: 1, isOneTimeUse: false, level: 1, description: "One of the two primordial forces. When paired with Yin, CPS is greatly boosted.", onClick: 5000, critRate: GENERIC_CRIT_RATE, critMultiplier: 10, set: 'Yin and Yang'},
+  { id: 'yin', name: 'Yin', rarity: 'legendary', cps: 50000, weight: 1, isOneTimeUse: false, level: 1, description: "One of the two great primordial forces.", onClick: 5000, critRate: GENERIC_CRIT_RATE, critMultiplier: 10, set: 'Yin and Yang'},
+  { id: 'yang', name: 'Yang', rarity: 'legendary', cps: 50000, weight: 1, isOneTimeUse: false, level: 1, description: "One of the two great primordial forces.", onClick: 5000, critRate: GENERIC_CRIT_RATE, critMultiplier: 10, set: 'Yin and Yang'},
 
   // Prayer Ritual - Greatly boosts crit rate and crit multiplier of active deck
-  { id: 'godsgarden', name: 'God\'s Garden', rarity: 'legendary', cps: 50000, weight: 1, isOneTimeUse: false, level: 1, description: "A garden that grows cookies at an incredible rate. While active, the garden boosts the cps of all cards in the active deck by 10%.", onClick: 20000, critRate: GENERIC_CRIT_RATE, critMultiplier: GENERIC_CRIT_MULTIPLIER, set: 'Prayer Ritual', buffs: [{ type: 'cps', value: 0.1 }]},
+  { id: 'godsgarden', name: 'God\'s Garden', rarity: 'legendary', cps: 50000, weight: 1, isOneTimeUse: false, level: 1, description: "A garden that grows cookies at an incredible rate.", onClick: 20000, critRate: GENERIC_CRIT_RATE, critMultiplier: GENERIC_CRIT_MULTIPLIER, set: 'Prayer Ritual', buffs: [{ type: 'cps', value: 0.1 }]},
   { id: 'cathedral', name: 'Cathedral', rarity: 'uncommon', cps: 10, weight: 5, isOneTimeUse: false, level: 1, description: "An ancient temple where cookies are worshipped.", onClick: 2, critRate: GENERIC_CRIT_RATE, critMultiplier: GENERIC_CRIT_MULTIPLIER, set: 'Prayer Ritual'},
-  { id: 'latetowork', name: 'Curious Discovery', rarity: 'rare', cps: 500, weight: 1, isOneTimeUse: false, level: 1, description: "A cookie collector who finds a mysterious cookie field.", onClick: 250, critRate: GENERIC_CRIT_RATE, critMultiplier: GENERIC_CRIT_MULTIPLIER, set: 'Prayer Ritual'},
+  { id: 'latetowork', name: 'Curious Discovery', rarity: 'rare', cps: 500, weight: 1, isOneTimeUse: false, level: 1, description: "A cookie collector stumbles upon a mysterious cookie field.", onClick: 250, critRate: GENERIC_CRIT_RATE, critMultiplier: GENERIC_CRIT_MULTIPLIER, set: 'Prayer Ritual'},
 
   // Craftmanship - greatly increases on click
   { id: 'cookieRobot', name: 'Cookie Robot', rarity: 'epic', cps: 5000, weight: 1, isOneTimeUse: false, level: 1, description: "A robot designed to farm cookies at an incredible rate.", onClick: 5000, critRate: GENERIC_CRIT_RATE, critMultiplier: GENERIC_CRIT_MULTIPLIER, set: 'Craftmanship'},
@@ -318,14 +318,14 @@ const GENERATOR_POOL: Generator[] = [
   { id: 'destruction', name: 'Destruction', rarity: 'epic', cps: 10000, weight: 1, isOneTimeUse: false, level: 1, description: "The destroyer of worlds.", onClick: 1500, critRate: GENERIC_CRIT_RATE, critMultiplier: GENERIC_CRIT_MULTIPLIER, set: 'Death Meadow'},
 
   // Crit Cards
-  { id: 'omniscience', name: 'Omniscience', rarity: 'legendary', cps: 0, weight: 1, isOneTimeUse: true, level: 1, description: "Fuse with omnipotence to awaken the cookie goddess.", onClick: 0, critRate: GENERIC_CRIT_RATE*2, critMultiplier: GENERIC_CRIT_MULTIPLIER*2, set: ''},
+  { id: 'omniscience', name: 'Omniscience', rarity: 'legendary', cps: 0, weight: 1, isOneTimeUse: true, level: 1, description: "Drag onto another card to increase crit rate, or fuse with omnipotence for a fun surprise.", onClick: 0, critRate: GENERIC_CRIT_RATE*2, critMultiplier: GENERIC_CRIT_MULTIPLIER*2, set: ''},
 
   // On Click Cards
   { id: 'deliveryboy', name: 'Delivery Boy', rarity: 'common', cps: 0.5, weight: 40, isOneTimeUse: false, level: 1, description: "A delivery boy who delivers cookies to your doorstep.", onClick: 0.5, critRate: GENERIC_CRIT_RATE, critMultiplier: GENERIC_CRIT_MULTIPLIER, set: '', buffs: [{ type: 'onClick', value: 0.1 }]},
   { id: 'mine', name: 'Mine', rarity: 'uncommon', cps: 2, weight: 30, isOneTimeUse: false, level: 1, description: "A deep mine filled with cookie ores.", onClick: 0.5, critRate: GENERIC_CRIT_RATE, critMultiplier: GENERIC_CRIT_MULTIPLIER, set: '', buffs: [{ type: 'onClick', value: 0.2 }]},
   { id: 'goldenMine', name: 'Golden Mine', rarity: 'rare', cps: 500, weight: 2, isOneTimeUse: false, level: 1, description: "A mine filled with golden cookie ores, producing a large amount of cookies.", onClick: 150, critRate: GENERIC_CRIT_RATE, critMultiplier: GENERIC_CRIT_MULTIPLIER, set: '', buffs: [{ type: 'onClick', value: 0.3 }]},
-  { id: 'omnipotence', name: 'Omnipotence', rarity: 'legendary', cps: 0, weight: 1, isOneTimeUse: true, level: 1, description: "Fuse with omniscience to awaken the cookie goddess.", onClick: 0, critRate: GENERIC_CRIT_RATE, critMultiplier: GENERIC_CRIT_MULTIPLIER, set: ''},
-  { id: 'queen', name: 'Queen', rarity: 'mythical', cps: 5000000, weight: 1, isOneTimeUse: false, level: 1, description: "A cookie queen that rules over a cookie kingdom. While active, the queen boosts the CPS of active cards by 100% and on click by 100%.", onClick: 1000000, critRate: GENERIC_CRIT_RATE, critMultiplier: GENERIC_CRIT_MULTIPLIER, set: '', buffs: [{ type: 'cps', value: 1}, { type: 'onClick', value: 1}]},
+  { id: 'omnipotence', name: 'Omnipotence', rarity: 'legendary', cps: 0, weight: 1, isOneTimeUse: true, level: 1, description: "Drag onto another card to increase crit rate, or fuse with omniscience for a fun surprise", onClick: 0, critRate: GENERIC_CRIT_RATE, critMultiplier: GENERIC_CRIT_MULTIPLIER, set: ''},
+  { id: 'queen', name: 'Queen', rarity: 'mythical', cps: 5000000, weight: 1, isOneTimeUse: false, level: 1, description: "The steadfast ruler of the cookie kingdom.", onClick: 1000000, critRate: GENERIC_CRIT_RATE, critMultiplier: GENERIC_CRIT_MULTIPLIER, set: '', buffs: [{ type: 'cps', value: 1}, { type: 'onClick', value: 1}]},
   
   // Traditional CPS
   { id: 'wheatFields', name: 'Fields', rarity: 'common', cps: 5, weight: 40, isOneTimeUse: false, level: 1, description: "A field of premium cookie wheat.", onClick: 0.2, critRate: GENERIC_CRIT_RATE, critMultiplier: GENERIC_CRIT_MULTIPLIER, set: '', buffs: [{ type: 'cps', value: 0.1 }]},
@@ -336,13 +336,13 @@ const GENERATOR_POOL: Generator[] = [
 
   // Corruptive / Sacrificial Cards
   { id: 'forestGuardian', name: 'Forest Guardian', rarity: 'epic', cps: 20000, weight: 1, isOneTimeUse: false, level: 1, description: "The sacrifice loving guardian of the cookie forest.", onClick: 5000, critRate: GENERIC_CRIT_RATE, critMultiplier: GENERIC_CRIT_MULTIPLIER, set: '', buffs: [{ type: 'sacrificeMultiplier', value: 1.1 }]},
-  { id: 'sorrow', name: 'Sorrow', rarity: 'epic', cps: 10000, weight: 1, isOneTimeUse: false, level: 1, description: "A sorrowful angel that boosts the sacrifice multiplier of all cards in the active deck by 10%.", onClick: 2000, critRate: GENERIC_CRIT_RATE, critMultiplier: GENERIC_CRIT_MULTIPLIER, set: '', buffs: [{ type: 'sacrificeMultiplier', value: 1.1 }]},
-  { id: 'fallenAngel', name: 'Fallen Angel', rarity: 'legendary', cps: 100000, weight: 1, isOneTimeUse: false, level: 1, description: "An angel that has fallen from grace. Has the unique property that it can be enhanced using any card.", onClick: 20000, critRate: GENERIC_CRIT_RATE, critMultiplier: GENERIC_CRIT_MULTIPLIER, set: '', buffs: [{ type: 'sacrificeMultiplier', value: 1.1 }]},
-  { id: 'demonLord', name: 'Demon Lord', rarity: 'mythical', cps: 1000000, weight: 1, isOneTimeUse: false, level: 1, description: "A demon lord who seeks eternal cookie dominion. Every foil card sacrificed to the Demon Lord permanently increases the Demon Lord's on click buff.", onClick: 200000, critRate: GENERIC_CRIT_RATE, critMultiplier: GENERIC_CRIT_MULTIPLIER, set: '', buffs: [{ type: 'onClick', value: 1 }]},
+  { id: 'sorrow', name: 'Sorrow', rarity: 'epic', cps: 10000, weight: 1, isOneTimeUse: false, level: 1, description: "A sorrowful angel that lives their life in mourning.", onClick: 2000, critRate: GENERIC_CRIT_RATE, critMultiplier: GENERIC_CRIT_MULTIPLIER, set: '', buffs: [{ type: 'sacrificeMultiplier', value: 1.1 }]},
+  { id: 'fallenAngel', name: 'Fallen Angel', rarity: 'legendary', cps: 100000, weight: 1, isOneTimeUse: false, level: 1, description: "An angel that has fallen from grace. Can be enhanced using any card.", onClick: 20000, critRate: GENERIC_CRIT_RATE, critMultiplier: GENERIC_CRIT_MULTIPLIER, set: '', buffs: [{ type: 'sacrificeMultiplier', value: 1.1 }]},
+  { id: 'demonLord', name: 'Demon Lord', rarity: 'mythical', cps: 1000000, weight: 1, isOneTimeUse: false, level: 1, description: "A demon lord who seeks eternal cookie dominion. Sacrifice a foiled soul to the Demon Lord to permanently increases his on click buff.", onClick: 200000, critRate: GENERIC_CRIT_RATE, critMultiplier: GENERIC_CRIT_MULTIPLIER, set: '', buffs: [{ type: 'onClick', value: 1 }]},
   // Unique Cards
   // { id: 'coinflip', name: 'Coinflip', rarity: 'uncommon', cps: 0.0, weight: 2, isOneTimeUse: true, level: 1, description: "Flip a coin to double your cookies or lose them all.", onClick: 0.5, critRate: 0, critMultiplier: 0, set: ''},
   { id: 'theFaker', name: 'The Faker', rarity: 'rare', cps: 0.0, weight: 5, isOneTimeUse: true, level: 1, description: "Drag onto another card for a chance to get a new foil. Has the potential to give an exclusive phantom foil.", onClick: 0, critRate: 0, critMultiplier: 0, set: ''},
-  { id: 'storage', name: 'Storage', rarity: 'legendary', cps: 0, weight: 0, isOneTimeUse: true, level: 1, description: "Drag onto another card to permanently protect if from reset on prestiging.", onClick: 0, critRate: 0, critMultiplier: 0, set: ''},
+  { id: 'storage', name: 'Storage', rarity: 'legendary', cps: 0, weight: 0, isOneTimeUse: true, level: 1, description: "Drag onto another card to permanently protect it from reset upon prestiging.", onClick: 0, critRate: 0, critMultiplier: 0, set: ''},
   
   { id: 'alchemist', name: 'Alchemist', rarity: 'legendary', cps: 40000, weight: 1, isOneTimeUse: false, level: 1, description: "An alchemist who occasionally makes mythical cookies on click.", onClick: 8000, critRate: GENERIC_CRIT_RATE*2, critMultiplier: GENERIC_CRIT_MULTIPLIER*2, set: 'Mystic', buffs: [{ type: 'critRate', value: 0.05 }] },
   { id: 'crystalCave', name: 'Crystal Cave', rarity: 'epic', cps: 20000, weight: 1, isOneTimeUse: false, level: 1, description: "A cave full of cookie crystals.", onClick: 4000, critRate: GENERIC_CRIT_RATE, critMultiplier: GENERIC_CRIT_MULTIPLIER, set: 'Mystic', buffs: [{ type: 'onClick', value: 0.2 }] },
@@ -1675,6 +1675,105 @@ useEffect(() => {
     return totalOnClick;
   };
 
+  const renderSelectedGeneratorInfo = () => {
+    if (!selectedGenerator) return null;
+  
+    const buffs = calculateBuffs(activeDeck);
+    const foilBonus = FOIL_BONUSES[selectedGenerator.foilType];
+    const boostMultiplier = Math.pow(1.25, selectedGenerator.boosts);
+    const cps = selectedGenerator.currentCps * foilBonus * boostMultiplier * buffs.cps;
+    const onClick = selectedGenerator.onClick * foilBonus * boostMultiplier * buffs.onClick;
+    const critRate = (selectedGenerator.critRate + buffs.critRate) * 100;
+    const critMultiplier = selectedGenerator.critMultiplier * buffs.critMultiplier;
+  
+    const rarityColor = RARITY_COLORS[selectedGenerator.rarity];
+    const rarityStyle = {
+      background: `linear-gradient(135deg, ${rarityColor}, ${adjustColor(rarityColor, -30)})`,
+    };
+  
+    return (
+      <div className="selected-generator-overlay" onClick={closeSelectedGenerator}>
+        <div 
+          className="selected-generator" 
+          onClick={(e) => e.stopPropagation()}
+          style={{backgroundImage: `url(${GENERATOR_IMAGES[selectedGenerator.id]})`}}
+        >
+          <div className="selected-generator-content">
+            <button className="close-button" onClick={closeSelectedGenerator}>&times;</button>
+            
+            <div className="generator-header-wrapper">
+              <div className="generator-header">
+                <h2>{selectedGenerator.name}</h2>
+                <div className="generator-attributes">
+                  <span className="generator-rarity" style={rarityStyle}>{selectedGenerator.rarity}</span>
+                  {selectedGenerator.foilType !== 'normal' && <span className="generator-foil">{selectedGenerator.foilType}</span>}
+                </div>
+                <div className="generator-description-wrapper">
+                  <p className="generator-description">{selectedGenerator.description}</p>
+                </div>
+              </div>
+            </div>
+            
+            
+            {selectedGenerator.isOneTimeUse ? (
+              <div className="one-time-use-info">
+                <h3>One-Time Use Card</h3>
+                <p>Remaining Uses: {selectedGenerator.uses}</p>
+              </div>
+            ) : (
+              <div className="generator-stats">
+                <div className="stat-group">
+                  <h3>Basic Stats</h3>
+                  <p>Level: {selectedGenerator.level}</p>
+                  <p>CPS: {formatNumber(cps)}</p>
+                  <p>Click Value: {formatNumber(onClick)}</p>
+                  <p>Crit Chance: {critRate.toFixed(2)}%</p>
+                  <p>Crit Multiplier: {critMultiplier.toFixed(2)}x</p>
+                </div>
+                
+                <div className="stat-group">
+                  <h3>Enhancements</h3>
+                  <p>Boosts: {selectedGenerator.boosts}/{BOOST_LIMITS[selectedGenerator.rarity]}</p>
+                  <p>Enhancements: {Math.round(selectedGenerator.enhancements)}/{Math.pow(5, selectedGenerator.level)}</p>
+                </div>
+                
+                {selectedGenerator.set && (
+                  <div className="stat-group">
+                    <h3>Set Information</h3>
+                    <p>Set: {selectedGenerator.set} ({SET_BONUSES.find(setBonus => setBonus.setName === selectedGenerator.set)?.requiredCards})</p>
+                    <p>Set Bonus: {SET_BONUSES.find(setBonus => setBonus.setName === selectedGenerator.set)?.buff.value}x {SET_BONUSES.find(setBonus => setBonus.setName === selectedGenerator.set)?.buff.type}</p>
+                  </div>
+                )}
+                {selectedGenerator.buffs && selectedGenerator.buffs.length > 0 && (
+                  <div className="stat-group">
+                    <h3>Buffs</h3>
+                    {selectedGenerator.buffs.map((buff, index) => (
+                      <p key={index}>
+                        {buff.type}: {buff.value > 1 ? `x${buff.value.toFixed(2)}` : `+${(buff.value * 100).toFixed(2)}%`}
+                      </p>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+            
+            <div className="generator-actions">
+              <button onClick={toggleLock}>
+                {selectedGenerator.isLocked ? 'Unlock' : 'Lock'}
+              </button>
+              <button onClick={destroyGenerator} disabled={selectedGenerator.isLocked}>
+                Destroy
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+  function adjustColor(color: string, amount: number): string {
+    return '#' + color.replace(/^#/, '').replace(/../g, color => ('0'+Math.min(255, Math.max(0, parseInt(color, 16) + amount)).toString(16)).substr(-2));
+  }
+
   const autoEnhance = () => {
     console.log("Auto Enhance triggered");
     
@@ -2110,28 +2209,7 @@ useEffect(() => {
         </div>
       )}
 
-      {selectedGenerator && (
-        <div className="selected-generator-overlay" onClick={closeSelectedGenerator}>
-          <div className="selected-generator" onClick={(e) => e.stopPropagation()}>
-            <button className="close-button" onClick={closeSelectedGenerator}>&times;</button>
-            <h3>{selectedGenerator.name}{selectedGenerator.foilType !== 'normal' ? ` (${selectedGenerator.foilType})` : ''}</h3>
-            <p>{selectedGenerator.description}</p>
-            <p>___________________________________</p>
-            <p>Level: {selectedGenerator.level} | CPS: {formatNumber(selectedGenerator.currentCps * FOIL_BONUSES[selectedGenerator.foilType] * Math.pow(1.25, selectedGenerator.boosts))} | {selectedGenerator.rarity}</p>
-            <p>On Click: {formatNumber(selectedGenerator.onClick * FOIL_BONUSES[selectedGenerator.foilType] * Math.pow(1.25, selectedGenerator.boosts))} | Crit %: {(selectedGenerator.critRate * 100).toFixed(2)}% | Crit Multiplier: {selectedGenerator.critMultiplier.toFixed(2)}x</p>
-            <p>Boosts: {selectedGenerator.boosts}/{BOOST_LIMITS[selectedGenerator.rarity]}</p>
-            {selectedGenerator.enhancements > 0 && <p>Enhancement Level: {Math.round(selectedGenerator.enhancements)}/{Math.pow(5, selectedGenerator.level)}</p>}
-            <div className="generator-actions">
-              <button onClick={toggleLock}>
-                {selectedGenerator.isLocked ? 'Unlock' : 'Lock'}
-              </button>
-              <button onClick={destroyGenerator} disabled={selectedGenerator.isLocked}>
-                Destroy
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      {selectedGenerator && renderSelectedGeneratorInfo()}
 
       {showWagerInput && (
         <div className="wager-input-overlay">
