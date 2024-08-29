@@ -1324,7 +1324,7 @@ useEffect(() => {
       if (scholarInActiveDeck) {
         setScholarBreakthrough(prev => {
           if (prev === null) {
-            const breakthroughTime = Math.floor(Math.random() * 360) + 180; // Random time between 3-6 minutes
+            const breakthroughTime = Math.floor(Math.random() * 360) + 90; // Random time between 1.5-3 minutes
             localStorage.setItem('scholarBreakthrough', breakthroughTime.toString());
             return breakthroughTime;
           }
@@ -1552,6 +1552,7 @@ useEffect(() => {
   };
 
   const toggleAchievements = () => {
+    checkAchievements();
     setShowAchievements(!showAchievements);
   };
 
