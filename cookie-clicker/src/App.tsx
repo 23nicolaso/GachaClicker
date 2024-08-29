@@ -90,10 +90,10 @@ const LOW_LEVEL_RARITY_CHANCES: Record<Rarity, number> = {
 const HIGH_LEVEL_RARITY_CHANCES: Record<Rarity, number> = {
   common: 0,
   uncommon: 0,
-  rare: 0.60,
+  rare: 0.50,
   epic: 0.35,
-  legendary: 0.04,
-  mythical: 0.01
+  legendary: 0.10,
+  mythical: 0.05
 };
 
 const RECYCLE_REWARDS: Record<Rarity, number> = {
@@ -253,11 +253,11 @@ const FOIL_CHANCES: Record<FoilType, number> = {
 };
 
 const FAKER_CHANCES: Record<FoilType, number> = {
-  normal: 0.5,
-  holo: 0.4,
-  'reverse-holo': 0.094,
-  'full-art': 0.005,
-  'phantom': 0.001,
+  normal: 0.2,
+  holo: 0.3,
+  'reverse-holo': 0.3,
+  'full-art': 0.1,
+  'phantom': 0.1,
 };
 
 const FOIL_BONUSES: Record<FoilType, number> = {
@@ -346,7 +346,7 @@ const GENERATOR_POOL: Generator[] = [
   
   { id: 'alchemist', name: 'Alchemist', rarity: 'legendary', cps: 40000, weight: 1, isOneTimeUse: false, level: 1, description: "An alchemist who occasionally makes mythical cookies on click.", onClick: 8000, critRate: GENERIC_CRIT_RATE*2, critMultiplier: GENERIC_CRIT_MULTIPLIER*2, set: 'Mystic', buffs: [{ type: 'critRate', value: 0.05 }] },
   { id: 'crystalCave', name: 'Crystal Cave', rarity: 'epic', cps: 20000, weight: 1, isOneTimeUse: false, level: 1, description: "A cave full of cookie crystals.", onClick: 4000, critRate: GENERIC_CRIT_RATE, critMultiplier: GENERIC_CRIT_MULTIPLIER, set: 'Mystic', buffs: [{ type: 'onClick', value: 0.2 }] },
-  { id: 'scholar', name: 'Scholar', rarity: 'legendary', cps: 0, weight: 2, isOneTimeUse: false, level: 1, description: "A scholar studying the ancient cookie texts.", onClick: 0, critRate: GENERIC_CRIT_RATE, critMultiplier: GENERIC_CRIT_MULTIPLIER, set: 'Mystic'},
+  { id: 'scholar', name: 'Scholar', rarity: 'legendary', cps: 100000, weight: 2, isOneTimeUse: false, level: 1, description: "A scholar studying the ancient cookie texts.", onClick: 10000, critRate: GENERIC_CRIT_RATE, critMultiplier: GENERIC_CRIT_MULTIPLIER, set: 'Mystic'},
 ]
 
 const MAX_INVENTORY_SIZE = 32; // 8x3 grid
@@ -377,11 +377,11 @@ function App() {
   const [achievements, setAchievements] = useState<Achievement[]>(() => {
     const savedAchievements = localStorage.getItem('achievements');
     return savedAchievements ? JSON.parse(savedAchievements) : [
-      { id: 'cookies_100', name: 'Cookie Novice', description: 'Reach 100 cookies', achieved: false, redeemed: false, reward: 1 },
-      { id: 'cookies_100000', name: 'Cookie Apprentice', description: 'Reach 100,000 cookies', achieved: false, redeemed: false, reward: 5 },
-      { id: 'cookies_1000000', name: 'Cookie Expert', description: 'Reach 1 million cookies', achieved: false, redeemed: false, reward: 10 },
-      { id: 'cookies_1000000000', name: 'Cookie Master', description: 'Reach 1 billion cookies', achieved: false, redeemed: false, reward: 50 },
-      { id: 'cookies_1000000000000', name: 'Cookie Legend', description: 'Reach 1 trillion cookies', achieved: false, redeemed: false, reward: 100 },
+      { id: 'cookies_100', name: 'Cookie Novice', description: 'Reach 100 cookies', achieved: false, redeemed: false, reward: 10 },
+      { id: 'cookies_100000', name: 'Cookie Apprentice', description: 'Reach 100,000 cookies', achieved: false, redeemed: false, reward: 50 },
+      { id: 'cookies_1000000', name: 'Cookie Expert', description: 'Reach 1 million cookies', achieved: false, redeemed: false, reward: 100 },
+      { id: 'cookies_1000000000', name: 'Cookie Master', description: 'Reach 1 billion cookies', achieved: false, redeemed: false, reward: 500 },
+      { id: 'cookies_1000000000000', name: 'Cookie Legend', description: 'Reach 1 trillion cookies', achieved: false, redeemed: false, reward: 1000 },
       { id: 'first_roll', name: 'Rookie Roller', description: 'Roll your first generator', achieved: false, redeemed: false, reward: 1 },
       { id: 'first_uncommon', name: 'Uncommon Find', description: 'Get your first uncommon generator', achieved: false, redeemed: false, reward: 5 },
       { id: 'first_rare', name: 'Rare Discovery', description: 'Get your first rare generator', achieved: false, redeemed: false, reward: 10 },
@@ -750,7 +750,7 @@ function App() {
     if (generator.isLocked) return;
   
     // Calculate recycle reward
-    const recycleReward = RECYCLE_REWARDS[generator.rarity] * (generator.enhancements);
+    const recycleReward = RECYCLE_REWARDS[generator.rarity] * (1 + generator.enhancements);
   
     if (recycleReward > 0) {
       setMysticalCookies(prev => prev + recycleReward);
@@ -1243,7 +1243,7 @@ function App() {
         const newGenerators = Array(count).fill(null).map(() => {
           const generator = getRandomGenerator(isHighLevel);
           if (generator.id === 'scholar') {
-            const breakthroughTime = Math.floor(Math.random() * 3600) + 1800; // Random time between 30-90 minutes
+            const breakthroughTime = Math.floor(Math.random() * 360) + 180; // Random time between 3-6 minutes
             setScholarBreakthrough(breakthroughTime);}
           return generator;
         });
@@ -1256,7 +1256,13 @@ function App() {
           const spinItems = Array(totalItems).fill(null).map(() => getRandomGenerator(true));
           
           // Set the winning item
-          const winningIndex = Math.floor(Math.random() * (totalItems - visibleItems)) + Math.floor(visibleItems / 2);
+          const winningIndex = Math.max(
+            Math.floor(visibleItems / 2),
+            Math.min(
+              totalItems - Math.ceil(visibleItems / 2) - 1,
+              Math.floor(Math.random() * (totalItems - visibleItems)) + Math.floor(visibleItems / 2)
+            )
+          );
           const winningItem = spinItems[winningIndex];
           
           setSpinItems(spinItems);
@@ -1325,7 +1331,7 @@ useEffect(() => {
                 currentCps: scholar.currentCps * 100,
                 onClick: scholar.onClick * 100,
                 description: "A scholar who has unlocked the secrets of the cookie universe.",
-                buffs: [{ type: 'cps', value: 3 }],
+                buffs: [{ type: 'cps', value: 10 }],
                 level: scholar.level,
                 critRate: scholar.critRate,
                 critMultiplier: scholar.critMultiplier,
