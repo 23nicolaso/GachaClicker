@@ -562,12 +562,20 @@ button:disabled {
   border-radius: 5px;
 }
 
-.auto-enhance-button:hover {
-  background-color: #45a049;
-}
-
-.auto-enhance-button:active {
-  background-color: #3e8e41;
+.prestige-button {
+  background-color: #0f0f0f;
+  border: none;
+  color: rgb(255, 255, 255);
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+  transition-duration: 0.4s;
+  border-radius: 5px;
 }
 
 .auto-evolve-button {
@@ -584,14 +592,6 @@ button:disabled {
   cursor: pointer;
   transition-duration: 0.4s;
   border-radius: 5px;
-}
-
-.auto-evolve-button:hover {
-  background-color: #45a049;
-}
-
-.auto-evolve-button:active {
-  background-color: #3e8e41;
 }
 
 /* New styles for the shop overlay */
@@ -628,6 +628,14 @@ button:disabled {
 }
 
 .shop-button svg {
+  margin-right: 5px;
+}
+
+.prestige-button svg {
+  margin-right: 5px;
+}
+
+.achievements-button svg {
   margin-right: 5px;
 }
 
@@ -1375,16 +1383,6 @@ button:disabled {
   font-size: 12px;
 }
 
-.auto-enhance-button.active {
-  background-color: #4CAF50;
-  color: white;
-}
-
-.auto-evolve-button.active {
-  background-color: #4CAF50;
-  color: white;
-}
-
 /* Add these new styles at the end of the file */
 .spin-overlay {
   position: fixed;
@@ -1572,32 +1570,36 @@ button:disabled {
   }
 }
 
-.trash-slot {
+.recycle-bin {
   width: 120px;
   height: 120px;
-  border: 2px dashed #ff4136;
+  border: 2px dashed #4CAF50;
   border-radius: 10px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   margin-top: 20px;
-  color: #ff4136;
+  color: #4CAF50;
   transition: all 0.3s ease;
   cursor: pointer;
 }
 
-.trash-slot svg {
+.recycle-bin svg {
   margin-bottom: 5px;
 }
 
-.trash-slot span {
+.recycle-bin span {
   font-size: 12px;
   text-align: center;
 }
 
-.trash-slot.drag-over {
-  background-color: rgba(255, 65, 54, 0.1);
+.floating-number.mythical {
+  color: #FF00FF; /* Bright pink color for mythical cookies */
+}
+
+.recycle-bin.drag-over {
+  background-color: rgba(0, 71, 20, 0.1);
   transform: scale(1.05);
 }
 
@@ -1932,4 +1934,10 @@ button:disabled {
   color: #ffffff;
   float: right;
   z-index: 1;
+}
+
+.breakthrough-timer {
+  font-size: 0.8em;
+  color: #ff9900;
+  display: block;
 }
