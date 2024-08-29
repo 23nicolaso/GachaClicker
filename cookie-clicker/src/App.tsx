@@ -1119,7 +1119,7 @@ function App() {
   
         // Alchemist functionality
         if (gen.id === 'alchemist') {
-          const luckBonus = buffs.luck * 0.1; // Increase chance by 1% per luck point
+          const luckBonus = buffs.luck * 0.05; // Increase chance by 1% per luck point
           if (Math.random() < 0.01 + luckBonus) { // 1% base chance + luck bonus
             setMysticalCookies(prev => prev + 1);
             // Set floating mystical cookie
