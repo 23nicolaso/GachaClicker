@@ -67,6 +67,7 @@ This project is [MIT](https://choosealicense.com/licenses/mit/) licensed.
 ## 👏 Acknowledgements
 
 - Inspired by the original [Cookie Clicker](https://orteil.dashnet.org/cookieclicker/) by Orteil
+- Generated Card Art with [Perchance](https://perchance.org/ai-pixel-art-generator)
 - [React](https://reactjs.org/)
 - [Vite](https://vitejs.dev/)
 - [GitHub Pages](https://pages.github.com/)
