@@ -11,6 +11,9 @@ A fun and addictive idle game that combines the classic Cookie Clicker mechanics
 - Click to earn cookies
 - Collect unique cookie-producing cards through a gacha system
 - Cards provide special bonuses and abilities
+- Get mythical cookies from quests and prestiging
+- Roll for rare, epic, legendary and mythical cards using mythical rolls
+- Build the best deck
 
 ## 🛠️ Technologies Used
 
