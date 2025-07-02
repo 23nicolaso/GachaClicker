@@ -5,59 +5,59 @@ import './App.css'
 import { FaStore, FaLock, FaRecycle, FaTrophy, FaRedo } from 'react-icons/fa'; // Make sure to install react-icons package
 import Achievements, { Achievement } from './Achievements'
 
-import cookie from '/cookie.png';
-import skeleton from '/skeleton.jpg';
-import grandma from '/grandma.jpg';
-import farm from '/farmer.jpg';
-import mine from '/mine.jpg';
-import factory from '/cookieFactory.jpg';
-import bank from '/bank.jpg';
-import cathedral from '/cathedral.jpg';
-import coinflip from '/coinflip.jpg';
-import cardBooster from '/booster.jpg';
-import theFaker from '/thefaker.jpg';
-import goldenMine from '/golden_mine.jpg';
-import cookieCastle from '/cookieCastle.jpg';
-import cookieRobot from '/cookierobot.jpg';
-import cookiePortal from '/cookieportal.jpg';
-import cookieAngel from '/cookieAngel.jpg';
-import queen from '/queen.jpg';
-import cookieGoddess from '/CookieGoddesss.jpg';
-import demonLord from '/demonlord.jpg';
-import designer from '/designer.jpg';
-import priest from '/priest.jpg';
-import knight from '/Knight.jpg';
-import deliveryboy from '/deliveryboy.jpg';
-import wheatFields from '/farmer2.jpg';
-import apostle from '/Apostle.jpg';
-import omniscience from '/Omniscience.jpg';
-import omnipotence from '/Omnipotence.jpg';
-import godsgarden from '/godsgarden.jpg';
-import garden from '/garden.jpg';
-import latetowork from '/latetowork.jpg';
-import excalibur from '/excalibur.jpg';
-import temple from '/Temple.jpg';
-import goldenGarden from '/goldenGarden.jpg';
-import rain from '/rain.jpg';
-import vengeance from '/vengeance.jpg';
-import destruction from '/destruction.jpg';
-import sorrow from '/sorrow.jpg';
-import fallenAngel from '/fallenAngel.jpg';
-import forestGuardian from '/forestGuardian.jpg';
-import yin from '/Yin.jpg';
-import yang from '/yang.jpg';
+import cookie from './assets/cookie.png';
+import skeleton from './assets/skeleton.jpg';
+import grandma from './assets/grandma.jpg';
+import farm from './assets/farmer.jpg';
+import mine from './assets/mine.jpg';
+import factory from './assets/factory.png';
+import bank from './assets/bank.png';
+import cathedral from './assets/cathedral.jpg';
+import coinflip from './assets/coinflip.jpg';
+import cardBooster from './assets/booster.jpg';
+import theFaker from './assets/thefaker.jpg';
+import goldenMine from './assets/golden_mine.jpg';
+import cookieCastle from './assets/castle.png';
+import cookieRobot from './assets/robot.png';
+import cookiePortal from './assets/cookieportal.jpg';
+import cookieAngel from './assets/cookieangel.png';
+import queen from './assets/queen.png';
+import cookieGoddess from './assets/cookiegoddess.png';
+import demonLord from './assets/demonlord.png';
+import designer from './assets/designer.png';
+import priest from './assets/priest.png';
+import knight from './assets/knight.png';
+import deliveryboy from './assets/deliveryboy.jpg';
+import wheatFields from './assets/farmer2.jpg';
+import apostle from './assets/apostle.png';
+import omniscience from './assets/Omniscience.jpg';
+import omnipotence from './assets/Omnipotence.jpg';
+import godsgarden from './assets/godsgarden.jpg';
+import garden from './assets/garden.jpg';
+import latetowork from './assets/latetowork.jpg';
+import excalibur from './assets/excalibur.png';
+import temple from './assets/Temple.jpg';
+import goldenGarden from './assets/goldenGarden.jpg';
+import rain from './assets/rain.jpg';
+import vengeance from './assets/vengeance.jpg';
+import destruction from './assets/destruction.jpg';
+import sorrow from './assets/sorrow.jpg';
+import fallenAngel from './assets/fallenAngel.png';
+import forestGuardian from './assets/forestGuardian.jpg';
+import yin from './assets/Yin.png';
+import yang from './assets/Yang.png';
 
-import galaxy from '/galaxy.jpg';
-import constellation from '/constellation.jpg';
-import crystalCave from '/crystalCave.jpg';
-import scholar from '/scholar.jpg';
-import alchemist from '/alchemist.jpg';
-import astrologist from '/astrologist.jpg';
-import berserk from '/berserk.jpg';
-import storage from '/storage.jpg';
-import afterlife from '/afterlife.jpg';
+import galaxy from './assets/galaxy.jpg';
+import constellation from './assets/constellation.jpg';
+import crystalCave from './assets/crystalCave.jpg';
+import scholar from './assets/scholar.jpg';
+import alchemist from './assets/alchemist.png';
+import astrologist from './assets/astrologist.jpg';
+import berserk from './assets/berserk.jpg';
+import storage from './assets/storage.jpg';
+import afterlife from './assets/afterlife.jpg';
 
-import mythicalScholar from '/dysonSphere.jpg';
+import mythicalScholar from './assets/dysonSphere.jpg';
 
 // COMPLETED CHANGES
 // - PRESTIGE SYSTEM - JUST KEEP IT SIMPLE, WHEN YOU PRESTIGE, YOUR COOKIES CONVERT INTO MYTHICAL COOKIES, YOU ONLY KEEP VAULTED CARDS
@@ -79,9 +79,9 @@ const GENERIC_CRIT_MULTIPLIER = 5;
 const HIGH_ROLL_COST = 10;
 
 const LOW_LEVEL_RARITY_CHANCES: Record<Rarity, number> = {
-  common: 0.70,
-  uncommon: 0.25,
-  rare: 0.05,
+  common: 0.75,
+  uncommon: 0.24,
+  rare: 0.01,
   epic: 0,
   legendary: 0,
   mythical: 0
@@ -90,10 +90,10 @@ const LOW_LEVEL_RARITY_CHANCES: Record<Rarity, number> = {
 const HIGH_LEVEL_RARITY_CHANCES: Record<Rarity, number> = {
   common: 0,
   uncommon: 0,
-  rare: 0.50,
-  epic: 0.35,
-  legendary: 0.10,
-  mythical: 0.05
+  rare: 0.60,
+  epic: 0.385,
+  legendary: 0.01,
+  mythical: 0.005
 };
 
 const RECYCLE_REWARDS: Record<Rarity, number> = {
@@ -106,7 +106,7 @@ const RECYCLE_REWARDS: Record<Rarity, number> = {
 };
 
 const MULTI_ROLL_COUNT = 8;
-const BASE_LOW_LEVEL_COST = 10;
+const BASE_LOW_LEVEL_COST = 1;
 
 const BOOST_LIMITS: Record<Rarity, number> = {
   common: 50,
@@ -1295,7 +1295,7 @@ function App() {
     } else {
       if (cookies >= lowLevelRollCost * count && ownedGenerators.length + count <= MAX_INVENTORY_SIZE && !isSpinning) {
         setCookies(prevCookies => prevCookies - lowLevelRollCost * count);
-        setLowLevelRollCost(prev => Math.round(prev * 1.05)); // Increase cost by 5%
+        setLowLevelRollCost(prev => Math.ceil(prev * 1.05)); // Increase cost by 5%
         setLastRollType('low');
 
         // Generate new generators
@@ -1961,14 +1961,14 @@ useEffect(() => {
     );
   };
 
-  const renderStats = () => (
-    <div className="stats">
-      <p>Cookies: {formatNumber(cookies)}</p>
-      <p>Mystical Cookies: {mysticalCookies}</p>
-      <p>Per second: {formatNumber(totalCPS)}</p>
-      <p>Per click: {formatNumber(calculateClickValue())}</p>
-    </div>
-  );
+    const renderStats = () => (
+      <div className="stats">
+        <p>Cookies: <span className="stat-value">{formatNumber(cookies)}</span></p>
+        <p>Mystical Cookies: <span className="stat-value">{mysticalCookies}</span></p>
+        <p>Per second: <span className="stat-value">{formatNumber(totalCPS)}</span></p>
+        <p>Per click: <span className="stat-value">{formatNumber(calculateClickValue())}</span></p>
+      </div>
+    );
 
   const renderGeneratorCard = (generator: GeneratorInstance, source: 'active' | 'inventory') => (
     <div
@@ -2022,7 +2022,7 @@ useEffect(() => {
               {num.isMythical ? ' MC' : ''}
             </div>
           ))}
-      </div>
+          </div>
           <div className="stats">
             {renderStats()}
           </div>
