@@ -485,6 +485,16 @@ function App() {
   const [spinTrigger, setSpinTrigger] = useState(0);
   const spinRef = useRef<HTMLDivElement>(null);
 
+  // Mobile two-tap card movement
+  interface MobileSelected {
+    generator: GeneratorInstance;
+    source: 'active' | 'inventory';
+    index: number;
+  }
+  const [mobileSelected, setMobileSelected] = useState<MobileSelected | null>(null);
+  // Tracks source metadata for the card details panel (for Move/Discard buttons)
+  const [selectedGenMeta, setSelectedGenMeta] = useState<{ source: 'active' | 'inventory'; index: number } | null>(null);
+
   // USE EFFECT HOOKS
   useEffect(() => {
     localStorage.setItem('cookies', cookies.toString())
@@ -1046,6 +1056,144 @@ function App() {
     setAutoEvolveEnabled(prev => !prev);
   };
 
+  // Mobile two-tap movement handler — mirrors handleDrop logic without DOM events
+  const handleMobileDrop = (
+    selected: MobileSelected,
+    targetArea: 'active' | 'inventory',
+    targetIndex: number,
+    targetGenerator?: GeneratorInstance | null
+  ) => {
+    const { generator, source: srcArea, index: srcIndex } = selected;
+
+    if (generator.id === 'theFaker') {
+      if (targetGenerator && !targetGenerator.isOneTimeUse) {
+        handleFakerReroll(generator, targetGenerator);
+        return;
+      }
+    }
+
+    if (generator.id === 'storage') {
+      if (targetGenerator) {
+        const updated = { ...targetGenerator, resetProtected: true };
+        if (targetArea === 'active') {
+          setActiveDeck(prev => prev.map(g => g?.instanceId === targetGenerator.instanceId ? updated : g));
+        } else {
+          setOwnedGenerators(prev => prev.map(g => g.instanceId === targetGenerator.instanceId ? updated : g));
+        }
+        const updatedStorage = { ...generator, uses: generator.uses - 1 };
+        if (updatedStorage.uses > 0) {
+          setOwnedGenerators(prev => prev.map(g => g.instanceId === generator.instanceId ? updatedStorage : g));
+          setActiveDeck(prev => prev.map(g => g?.instanceId === generator.instanceId ? updatedStorage : g));
+        } else {
+          setOwnedGenerators(prev => prev.filter(g => g.instanceId !== generator.instanceId));
+          setActiveDeck(prev => prev.map(g => g?.instanceId === generator.instanceId ? null : g));
+        }
+        return;
+      }
+    }
+
+    if (generator.id === 'cardBooster') {
+      if (targetGenerator && !targetGenerator.isOneTimeUse) {
+        handleBoost(generator, targetGenerator);
+        return;
+      }
+    }
+
+    if (generator.id === 'omniscience' || generator.id === 'omnipotence') {
+      if (targetGenerator) {
+        handleOmniscienceOmnipotence(generator, targetGenerator);
+        return;
+      }
+    }
+
+    if (srcArea === targetArea) {
+      if (srcArea === 'active') {
+        if (targetGenerator && (targetGenerator.id === generator.id || targetGenerator.id === 'fallenAngel' || targetGenerator.id === 'demonLord') && !targetGenerator.isLocked) {
+          setActiveDeck(prev => {
+            const newDeck = [...prev];
+            newDeck[srcIndex] = null;
+            newDeck[targetIndex] = enhanceGenerator(targetGenerator, generator);
+            return newDeck;
+          });
+        } else {
+          setActiveDeck(prev => {
+            const newDeck = [...prev];
+            [newDeck[srcIndex], newDeck[targetIndex]] = [newDeck[targetIndex], newDeck[srcIndex]];
+            return newDeck;
+          });
+        }
+      } else {
+        if (targetGenerator && (targetGenerator.id === generator.id || targetGenerator.id === 'fallenAngel' || targetGenerator.id === 'demonLord')) {
+          setOwnedGenerators(prev => {
+            const newInv = [...prev];
+            newInv[targetIndex] = enhanceGenerator(targetGenerator, generator);
+            return newInv.filter(g => g.instanceId !== generator.instanceId);
+          });
+        } else {
+          setOwnedGenerators(prev => {
+            const newInv = [...prev];
+            const oldIdx = newInv.findIndex(g => g.instanceId === generator.instanceId);
+            if (oldIdx !== targetIndex) {
+              newInv.splice(oldIdx, 1);
+              newInv.splice(targetIndex, 0, generator);
+            }
+            return newInv;
+          });
+        }
+      }
+    } else if (targetArea === 'active') {
+      if (targetIndex >= activeSlots) return;
+      if (targetGenerator && (targetGenerator.id === generator.id || targetGenerator.id === 'fallenAngel' || targetGenerator.id === 'demonLord') && !targetGenerator.isLocked) {
+        setActiveDeck(prev => {
+          const newDeck = [...prev];
+          newDeck[targetIndex] = enhanceGenerator(targetGenerator, generator);
+          return newDeck;
+        });
+        setOwnedGenerators(prev => prev.filter(g => g.instanceId !== generator.instanceId));
+      } else {
+        setActiveDeck(prev => {
+          const newDeck = [...prev];
+          newDeck[targetIndex] = generator;
+          return newDeck;
+        });
+        setOwnedGenerators(prev => {
+          const newInv = prev.filter(g => g.instanceId !== generator.instanceId);
+          if (targetGenerator) newInv.push(targetGenerator);
+          return newInv;
+        });
+        if (srcArea === 'active') {
+          setActiveDeck(prev => prev.map((g, i) => i === srcIndex ? targetGenerator ?? null : g));
+        }
+      }
+    } else {
+      // targetArea === 'inventory'
+      if (ownedGenerators.length < MAX_INVENTORY_SIZE) {
+        setOwnedGenerators(prev => [...prev, generator]);
+        setActiveDeck(prev => prev.map(g => g?.instanceId === generator.instanceId ? null : g));
+      }
+    }
+  };
+
+  // Discard (recycle) the currently-selected card from the details panel
+  const discardSelectedGenerator = () => {
+    if (!selectedGenerator || selectedGenerator.isLocked) return;
+    const recycleReward = RECYCLE_REWARDS[selectedGenerator.rarity] * (1 + selectedGenerator.enhancements);
+    if (recycleReward > 0) setMysticalCookies(prev => prev + recycleReward);
+    if (selectedGenMeta?.source === 'active') {
+      setActiveDeck(prev => prev.map(g => g?.instanceId === selectedGenerator.instanceId ? null : g));
+    } else {
+      setOwnedGenerators(prev => prev.filter(g => g.instanceId !== selectedGenerator.instanceId));
+    }
+    closeSelectedGenerator();
+  };
+
+  // Start mobile move mode from the card details panel
+  const startMobileMove = () => {
+    if (!selectedGenerator || !selectedGenMeta) return;
+    setMobileSelected({ generator: selectedGenerator, source: selectedGenMeta.source, index: selectedGenMeta.index });
+    closeSelectedGenerator();
+  };
+
   // Add this function to handle the card boost
   const handleBoost = (booster: GeneratorInstance, target: GeneratorInstance) => {
     if (target.boosts >= BOOST_LIMITS[target.rarity]) {
@@ -1391,12 +1539,25 @@ useEffect(() => {
   }, [isSpinning, spinTrigger]);
 
   // Modify the handleSlotClick function
-  const handleSlotClick = (generator: GeneratorInstance) => {
+  const handleSlotClick = (generator: GeneratorInstance, source: 'active' | 'inventory', cardIndex: number) => {
+    if (mobileSelected) {
+      // Tapping the same card cancels selection
+      if (mobileSelected.generator.instanceId === generator.instanceId) {
+        setMobileSelected(null);
+        return;
+      }
+      // Tapping a different card → perform move/interaction
+      handleMobileDrop(mobileSelected, source, cardIndex, generator);
+      setMobileSelected(null);
+      return;
+    }
     setSelectedGenerator({ ...generator, isLocked: generator.isLocked || false });
+    setSelectedGenMeta({ source, index: cardIndex });
   };
 
   const closeSelectedGenerator = () => {
     setSelectedGenerator(null);
+    setSelectedGenMeta(null);
   };
 
   const toggleLock = () => {
@@ -1759,10 +1920,13 @@ useEffect(() => {
             
             <div className="generator-actions">
               <button onClick={toggleLock}>
-                {selectedGenerator.isLocked ? 'Unlock' : 'Lock'}
+                {selectedGenerator.isLocked ? '🔓 Unlock' : '🔒 Lock'}
               </button>
-              <button onClick={destroyGenerator} disabled={selectedGenerator.isLocked}>
-                Destroy
+              <button className="move-btn" onClick={startMobileMove}>
+                ↕ Move
+              </button>
+              <button className="discard-btn" onClick={discardSelectedGenerator} disabled={selectedGenerator.isLocked}>
+                🗑 Recycle
               </button>
             </div>
           </div>
@@ -1970,147 +2134,231 @@ useEffect(() => {
       </div>
     );
 
-  const renderGeneratorCard = (generator: GeneratorInstance, source: 'active' | 'inventory') => (
-    <div
-      className={`generator-card ${generator.isOneTimeUse ? 'one-time-use' : ''} ${generator.isLocked ? 'locked' : ''} ${generator.foilType}`}
-      style={{borderColor: RARITY_COLORS[generator.rarity]}}
-      draggable={!generator.isLocked}
-      onDragStart={(e) => handleDragStart(e, generator, source)}
-      onDragEnd={handleDragEnd}
-      onClick={() => handleSlotClick(generator)}
-      data-instance-id={generator.instanceId}
-      data-uses={generator.isOneTimeUse ? generator.uses : undefined}
-    >
-      <img src={GENERATOR_IMAGES[generator.id]} alt={generator.name} />
-      <div className="card-info">
-        <span>{generator.name}</span>
-        {!generator.isOneTimeUse && (
-          <span>{formatNumber(generator.currentCps * FOIL_BONUSES[generator.foilType] * Math.pow(1.25, generator.boosts))} CPS</span>
-        )}
-        {generator.id === 'scholar' && source === 'active' && scholarBreakthrough !== null && (
-        <span className="breakthrough-timer">
-          Breakthrough in: {scholarBreakthrough}s
-        </span>
-      )}
-        {generator.level > 1 && <span>LVL {generator.level}</span>}
-        {generator.isOneTimeUse && <span>Uses: {generator.uses}</span>} 
+  const renderGeneratorCard = (generator: GeneratorInstance, source: 'active' | 'inventory', cardIndex: number) => {
+    const isMobileSelected = mobileSelected?.generator.instanceId === generator.instanceId;
+    return (
+      <div
+        className={`generator-card ${generator.isOneTimeUse ? 'one-time-use' : ''} ${generator.isLocked ? 'locked' : ''} ${generator.foilType} ${isMobileSelected ? 'mobile-selected' : ''} ${generator.resetProtected ? 'reset-protected' : ''}`}
+        style={{borderColor: RARITY_COLORS[generator.rarity]}}
+        draggable={!generator.isLocked}
+        onDragStart={(e) => handleDragStart(e, generator, source)}
+        onDragEnd={handleDragEnd}
+        onClick={(e) => { e.stopPropagation(); handleSlotClick(generator, source, cardIndex); }}
+        data-instance-id={generator.instanceId}
+        data-uses={generator.isOneTimeUse ? generator.uses : undefined}
+      >
+        <img src={GENERATOR_IMAGES[generator.id]} alt={generator.name} />
+        <div className="card-info">
+          <span>{generator.name}</span>
+          {!generator.isOneTimeUse && (
+            <span>{formatNumber(generator.currentCps * FOIL_BONUSES[generator.foilType] * Math.pow(1.25, generator.boosts))} CPS</span>
+          )}
+          {generator.id === 'scholar' && source === 'active' && scholarBreakthrough !== null && (
+            <span className="breakthrough-timer">
+              {scholarBreakthrough}s
+            </span>
+          )}
+          {generator.level > 1 && <span>LVL {generator.level}</span>}
+          {generator.isOneTimeUse && <span>Uses: {generator.uses}</span>}
+        </div>
       </div>
-    </div>
-  );
+    );
+  };
 
   return (
     <div className="App">
       <div className="game-container">
+
+        {/* ── Left Panel (Cookie + Stats + Controls) ── */}
         <div className="left-panel">
-          <div className="cookie-container">
-          <img 
-            src={cookie} 
-            alt="Cookie" 
-            className="cookie" 
-            onClick={handleClick}
-            draggable="false"
-          />
-          {floatingNumbers.map(num => (
-            <div
-              key={num.id}
-              className={`floating-number ${num.crit ? 'crit' : ''} ${num.isMythical ? 'mythical' : ''}`}
-              style={{ '--x': `${num.x}px`, '--y': `${num.y}px` } as React.CSSProperties}
-            >
-              {num.crit ? <span className="crit">CRIT!</span> : null}
-              {num.isMythical ? '+' : ''}
-              {formatNumber(num.value)}
-              {num.isMythical ? ' MC' : ''}
-            </div>
-          ))}
-          </div>
-          <div className="stats">
-            {renderStats()}
-          </div>
-          <div className="game-controls">
-          <button className="shop-button" onClick={toggleShop}>
-            <FaStore /> Shop
-          </button>
-          <button className="achievements-button" onClick={toggleAchievements}>
-            <FaTrophy /> Achievements
-          </button>
-          <button onClick={confirmReset} className="reset-button">
-            Reset Game
-          </button>
+          <div className="game-title">🍪 Gacha Clicker</div>
 
-          <button onClick={handlePrestige} className="prestige-button">
-            <FaRedo /> Prestige
-          </button> 
-          <button 
-            onClick={toggleAutoEnhance} 
-            className={`auto-enhance-button ${autoEnhanceEnabled ? 'active' : ''}`}
-          >
-            Auto Enhance: {autoEnhanceEnabled ? 'ON' : 'OFF'}
-          </button>
-
-          <button 
-            onClick={toggleAutoEvolve} 
-            className={`auto-evolve-button ${autoEvolveEnabled ? 'active' : ''}`}
-          >
-            Auto Evolve: {autoEvolveEnabled ? 'ON' : 'OFF'}
-          </button>
-          </div>
-
-          <div 
-            className="recycle-bin" 
-            onDragOver={handleDragOver} 
-            onDragLeave={handleDragLeave} 
-            onDrop={handleRecycleDrop}
-          >
-            <FaRecycle /> 
-          </div>
-      </div>
-  
-        <div className="right-panel">
-        {renderBuffInfo()}
-          <div className="active-deck">
-            {[...Array(6)].map((_, index) => (
-              <div
-                key={index}
-                className={`active-slot ${index < activeSlots ? (activeDeck[index] ? 'filled' : 'empty') : 'locked'}`}
-                onDragOver={index < activeSlots ? handleDragOver : undefined}
-                onDragLeave={index < activeSlots ? handleDragLeave : undefined}
-                onDrop={index < activeSlots ? (e) => handleDrop(e, index, 'active') : undefined}
-              >
-                {index < activeSlots ? (
-                  activeDeck[index] && renderGeneratorCard(activeDeck[index], 'active')
-                ) : (
-                  <div className="locked-slot" onClick={() => purchaseSlot(index + 1)}>
-                  <FaLock />
-                    <span>{formatNumber(Math.pow(100, index + 1))} cookies</span>
-                </div>
-              )}
-            </div>
-            ))}
-          </div>
-          <div className="inventory">
-            {ownedGenerators.map((generator, index) => (
-              <div
-                key={generator.instanceId}
-                className="inventory-slot filled"
-                onDragOver={handleDragOver}
-                onDragLeave={handleDragLeave}
-                onDrop={(e) => handleDrop(e, index, 'inventory')}
-              >
-                {renderGeneratorCard(generator, 'inventory')}
-          </div>
-        ))}
-            {[...Array(MAX_INVENTORY_SIZE - ownedGenerators.length)].map((_, index) => (
-              <div
-                key={ownedGenerators.length + index}
-                className="inventory-slot empty"
-                onDragOver={handleDragOver}
-                onDragLeave={handleDragLeave}
-                onDrop={(e) => handleDrop(e, ownedGenerators.length + index, 'inventory')}
+          <div className="cookie-wrapper">
+            <div className="cookie-container">
+              <img
+                src={cookie}
+                alt="Cookie"
+                className="cookie"
+                onClick={handleClick}
+                draggable="false"
               />
-            ))}
-      </div>
-      </div>
+              {floatingNumbers.map(num => (
+                <div
+                  key={num.id}
+                  className={`floating-number ${num.crit ? 'crit' : ''} ${num.isMythical ? 'mythical' : ''}`}
+                  style={{ '--x': `${num.x}px`, '--y': `${num.y}px` } as React.CSSProperties}
+                >
+                  {num.crit ? <span className="crit">CRIT!</span> : null}
+                  {num.isMythical ? '+' : ''}{formatNumber(num.value)}{num.isMythical ? ' ✨' : ''}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="stats-panel">
+            <div className="cookie-count">{formatNumber(cookies)}</div>
+            <div className="cookie-label">cookies</div>
+            <div className="stat-row">
+              <span>per second</span>
+              <span className="stat-val">{formatNumber(totalCPS)}</span>
+            </div>
+            <div className="stat-row">
+              <span>per click</span>
+              <span className="stat-val">{formatNumber(calculateClickValue())}</span>
+            </div>
+            <div className="stat-row">
+              <span>✨ mystical</span>
+              <span className="stat-val mystical-val">{mysticalCookies}</span>
+            </div>
+          </div>
+
+          <div className="game-controls">
+            <button className="ctrl-btn" onClick={toggleShop}>
+              <FaStore /> Gacha Shop
+            </button>
+            <button className="ctrl-btn" onClick={toggleAchievements}>
+              <FaTrophy /> Achievements
+            </button>
+            <button
+              className={`ctrl-btn ${autoEnhanceEnabled ? 'is-active' : ''}`}
+              onClick={toggleAutoEnhance}
+            >
+              ⚡ Auto Enhance: {autoEnhanceEnabled ? 'ON' : 'OFF'}
+            </button>
+            <button
+              className={`ctrl-btn ${autoEvolveEnabled ? 'is-active' : ''}`}
+              onClick={toggleAutoEvolve}
+            >
+              🌟 Auto Evolve: {autoEvolveEnabled ? 'ON' : 'OFF'}
+            </button>
+            <button className="ctrl-btn prestige-btn" onClick={handlePrestige}>
+              <FaRedo /> Prestige
+            </button>
+            <button className="ctrl-btn danger" onClick={confirmReset}>
+              ↺ Reset Game
+            </button>
+          </div>
+
+          <div className="recycle-section">
+            <div className="recycle-label">Drag cards here (or use Recycle button) to gain Mystical Cookies</div>
+            <div
+              className={`recycle-bin ${mobileSelected ? 'mobile-recycle-active' : ''}`}
+              onDragOver={handleDragOver}
+              onDragLeave={handleDragLeave}
+              onDrop={handleRecycleDrop}
+              onClick={() => {
+                if (mobileSelected) {
+                  const { generator, source } = mobileSelected;
+                  if (!generator.isLocked) {
+                    const reward = RECYCLE_REWARDS[generator.rarity] * (1 + generator.enhancements);
+                    if (reward > 0) setMysticalCookies(prev => prev + reward);
+                    if (source === 'active') {
+                      setActiveDeck(prev => prev.map(g => g?.instanceId === generator.instanceId ? null : g));
+                    } else {
+                      setOwnedGenerators(prev => prev.filter(g => g.instanceId !== generator.instanceId));
+                    }
+                  }
+                  setMobileSelected(null);
+                }
+              }}
+            >
+              <FaRecycle />
+              <span>{mobileSelected ? 'Tap to Recycle' : 'Recycle'}</span>
+            </div>
+          </div>
         </div>
+
+        {/* ── Right Panel (Deck + Inventory) ── */}
+        <div className="right-panel">
+
+          {mobileSelected && (
+            <div className="mobile-move-banner">
+              <span>↕ Moving: <strong>{mobileSelected.generator.name}</strong> — tap a slot to place it</span>
+              <button className="cancel-move" onClick={() => setMobileSelected(null)}>✕ Cancel</button>
+            </div>
+          )}
+
+          {renderBuffInfo()}
+
+          <div className="deck-section">
+            <div className="section-header">
+              <span className="section-title">⚔ Active Deck</span>
+              <span className="section-count">{activeDeck.filter(Boolean).length} / {activeSlots} active</span>
+            </div>
+            <div className="active-deck">
+              {[...Array(6)].map((_, index) => (
+                <div
+                  key={index}
+                  className={`active-slot ${
+                    index < activeSlots
+                      ? (activeDeck[index] ? 'filled' : 'empty')
+                      : 'locked'
+                  } ${mobileSelected && index < activeSlots ? 'mobile-drop-target' : ''}`}
+                  onDragOver={index < activeSlots ? handleDragOver : undefined}
+                  onDragLeave={index < activeSlots ? handleDragLeave : undefined}
+                  onDrop={index < activeSlots ? (e) => handleDrop(e, index, 'active') : undefined}
+                  onClick={() => {
+                    if (mobileSelected && index < activeSlots) {
+                      handleMobileDrop(mobileSelected, 'active', index, activeDeck[index]);
+                      setMobileSelected(null);
+                    }
+                  }}
+                >
+                  {index < activeSlots ? (
+                    activeDeck[index] ? renderGeneratorCard(activeDeck[index]!, 'active', index) : null
+                  ) : (
+                    <div className="locked-slot" onClick={() => purchaseSlot(index + 1)}>
+                      <FaLock />
+                      <span>{formatNumber(Math.pow(100, index + 1))} cookies</span>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="inventory-section">
+            <div className="section-header">
+              <span className="section-title">📦 Inventory</span>
+              <span className="section-count">{ownedGenerators.length} / {MAX_INVENTORY_SIZE}</span>
+            </div>
+            <div className="inventory">
+              {ownedGenerators.map((generator, index) => (
+                <div
+                  key={generator.instanceId}
+                  className={`inventory-slot filled ${mobileSelected ? 'mobile-drop-target' : ''}`}
+                  onDragOver={handleDragOver}
+                  onDragLeave={handleDragLeave}
+                  onDrop={(e) => handleDrop(e, index, 'inventory')}
+                  onClick={() => {
+                    if (mobileSelected) {
+                      handleMobileDrop(mobileSelected, 'inventory', index, generator);
+                      setMobileSelected(null);
+                    }
+                  }}
+                >
+                  {renderGeneratorCard(generator, 'inventory', index)}
+                </div>
+              ))}
+              {[...Array(MAX_INVENTORY_SIZE - ownedGenerators.length)].map((_, index) => (
+                <div
+                  key={ownedGenerators.length + index}
+                  className={`inventory-slot empty ${mobileSelected ? 'mobile-drop-target' : ''}`}
+                  onDragOver={handleDragOver}
+                  onDragLeave={handleDragLeave}
+                  onDrop={(e) => handleDrop(e, ownedGenerators.length + index, 'inventory')}
+                  onClick={() => {
+                    if (mobileSelected) {
+                      handleMobileDrop(mobileSelected, 'inventory', ownedGenerators.length + index, null);
+                      setMobileSelected(null);
+                    }
+                  }}
+                />
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
 
       {showAchievements && (
         <Achievements 
